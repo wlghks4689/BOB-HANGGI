@@ -1,0 +1,16 @@
+import type { DesignTokens, FontChoice } from '../types/onboarding'
+import { EditorSection, Field, NumberField, ToggleField } from './EditorFields'
+
+export function DesignEditor({ value, onChange }: { value: DesignTokens; onChange: (tokens: DesignTokens) => void }) {
+  const patch = (change: Partial<DesignTokens>) => onChange({ ...value, ...change })
+  const color = (label: string, key: keyof Pick<DesignTokens, 'primary' | 'accent' | 'background' | 'surface' | 'text' | 'mutedText' | 'border'>) => <Field label={label}><div className="color-field"><input type="color" value={value[key]} onChange={(event) => patch({ [key]: event.target.value })} /><input value={value[key]} onChange={(event) => patch({ [key]: event.target.value })} /></div></Field>
+  return <>
+    <EditorSection title="BRAND COLORS" description="Preset 없이 각 값을 직접 조정합니다."><div className="editor-grid two">{color('Primary', 'primary')}{color('Accent', 'accent')}{color('Background', 'background')}{color('Surface', 'surface')}{color('Text', 'text')}{color('Muted Text', 'mutedText')}{color('Border', 'border')}</div></EditorSection>
+    <EditorSection title="UI SHAPE"><div className="editor-grid two"><NumberField label="Card Radius" value={value.cardRadius} min={0} max={40} onChange={(cardRadius) => patch({ cardRadius })} /><NumberField label="Button Radius" value={value.buttonRadius} min={0} max={40} onChange={(buttonRadius) => patch({ buttonRadius })} /><NumberField label="Tag Radius" value={value.tagRadius} min={0} max={999} onChange={(tagRadius) => patch({ tagRadius })} /><NumberField label="Card Border" value={value.cardBorderWidth} min={0} max={4} onChange={(cardBorderWidth) => patch({ cardBorderWidth })} /></div><Field label="Spacing Density"><input type="range" min="0.75" max="1.35" step="0.05" value={value.spacingDensity} onChange={(event) => patch({ spacingDensity: Number(event.target.value) })} /><small>{value.spacingDensity.toFixed(2)}×</small></Field><ToggleField label="Card Shadow" checked={value.shadow} onChange={(shadow) => patch({ shadow })} /></EditorSection>
+    <EditorSection title="TYPOGRAPHY" description="모바일 Preview의 글꼴과 글자 크기를 즉시 비교합니다."><div className="editor-grid two"><FontSelect label="Headline Font" value={value.headlineFont} onChange={(headlineFont) => patch({ headlineFont })} /><FontSelect label="Body Font" value={value.bodyFont} onChange={(bodyFont) => patch({ bodyFont })} /><NumberField label="Headline Size" value={value.headlineSize} min={18} max={34} step={0.5} onChange={(headlineSize) => patch({ headlineSize })} /><NumberField label="Body Size" value={value.bodySize} min={9} max={18} step={0.5} onChange={(bodySize) => patch({ bodySize })} /><NumberField label="Button · Tag Size" value={value.controlSize} min={8} max={16} step={0.5} onChange={(controlSize) => patch({ controlSize })} /></div><p className="editor-footnote">Developer Note의 크기는 각 Note가 있는 화면의 CONTENT 탭에서 별도로 조정합니다.</p></EditorSection>
+  </>
+}
+
+function FontSelect({ label, value, onChange }: { label: string; value: FontChoice; onChange: (font: FontChoice) => void }) {
+  return <Field label={label}><select value={value} onChange={(event) => onChange(event.target.value as FontChoice)}><option value="sans">Sans</option><option value="serif">Serif</option><option value="mono">Mono</option><option value="hand">Handwriting</option></select></Field>
+}
