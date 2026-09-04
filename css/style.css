@@ -141,6 +141,8 @@ h1, h2, p { margin: 0; }
 .choice-field:has([aria-invalid="true"]) .choice-option > span { border-color: var(--error); }
 .field-message, .field-error { margin-top: 6px; color: var(--error); font-size: 0.8rem; }
 .field-message:empty { display: none; }
+.field-help { margin-top: 8px; color: var(--secondary); font-size: 0.8rem; line-height: 1.6; }
+.photo-guide { margin: -2px 0 12px; }
 .interest-fields { min-width: 0; }
 .interest-fields .field + .field { margin-top: 16px; }
 .age-range { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }

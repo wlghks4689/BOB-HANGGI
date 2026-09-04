@@ -43,12 +43,14 @@
             </fieldset>
             <div class="field"><label for="region_detail">상세 지역</label><select id="region_detail" name="region_detail" required data-region-detail disabled><option value="">먼저 지역을 선택해주세요</option></select></div>
               <div class="field"><label for="job_category">직업군</label><select id="job_category" name="job_category" required><option value="">선택해주세요</option><option>IT / 개발</option><option>경영 / 사무</option><option>금융</option><option>전문직</option><option>의료</option><option>교육</option><option>공무원 / 공공기관</option><option>연구 / 기술</option><option>디자인 / 예술</option><option>미디어</option><option>영업 / 마케팅</option><option>서비스</option><option>자영업 / 사업</option><option>학생</option><option>기타</option></select></div>
+            <div class="field" hidden><label for="job_other">직업군 직접 입력</label><input id="job_other" name="job_other" type="text" maxlength="80" placeholder="현재 하시는 일을 입력해주세요" disabled /></div>
               <div class="field"><label for="height">키</label><select id="height" name="height" required data-height><option value="">선택해주세요</option></select></div>
               <div class="field"><label for="mbti">MBTI</label><select id="mbti" name="mbti" required><option value="">선택해주세요</option><option>ISTJ</option><option>ISFJ</option><option>INFJ</option><option>INTJ</option><option>ISTP</option><option>ISFP</option><option>INFP</option><option>INTP</option><option>ESTP</option><option>ESFP</option><option>ENFP</option><option>ENTP</option><option>ESTJ</option><option>ESFJ</option><option>ENFJ</option><option>ENTJ</option></select></div>
             <div class="field field-full photo-field">
               <label for="profile_photo">프로필 사진 <span>1장</span></label>
+              <p id="photo-guide" class="field-help photo-guide">이목구비가 뚜렷하게 보이는 사진으로 부탁드립니다.</p>
               <div class="photo-upload-control">
-                <input class="visually-hidden" id="profile_photo" name="profile_photo" type="file" accept="image/jpeg,image/png,image/webp" required data-photo-input aria-describedby="photo-message" />
+                <input class="visually-hidden" id="profile_photo" name="profile_photo" type="file" accept="image/jpeg,image/png,image/webp" required data-photo-input aria-describedby="photo-guide photo-message" />
                 <label class="photo-upload-box" for="profile_photo"><strong data-upload-label>사진 선택하기</strong><span>JPG · PNG · WEBP</span></label>
               </div>
               <div id="photo-message" class="field-message" aria-live="polite" data-photo-message></div>
@@ -92,9 +94,7 @@
         <fieldset class="form-section" id="contact">
           <legend><span>04</span>연락 수단</legend>
           <div class="form-grid">
-            <div class="field field-full"><label for="phone">연락처</label><input id="phone" name="phone" type="tel" autocomplete="tel" inputmode="tel" placeholder="010-0000-0000" maxlength="20" required /></div>
-            <div class="field"><label for="instagram">Instagram <span>선택</span></label><input id="instagram" name="instagram" type="text" placeholder="@username" maxlength="50" autocapitalize="none" spellcheck="false" /></div>
-            <div class="field"><label for="kakao_id">카카오톡 ID <span>선택</span></label><input id="kakao_id" name="kakao_id" type="text" placeholder="Kakao ID" maxlength="50" autocapitalize="none" spellcheck="false" /></div>
+            <div class="field field-full"><label for="phone">연락처</label><input id="phone" name="phone" type="tel" autocomplete="tel" inputmode="tel" placeholder="010-0000-0000" maxlength="20" required aria-describedby="contact-guide" /><p id="contact-guide" class="field-help">소개 제안은 카카오톡으로 전달 드립니다.</p></div>
           </div>
         </fieldset>
 
@@ -108,17 +108,10 @@
               <summary>수집 항목 및 이용 안내</summary>
               <dl>
                 <dt>목적</dt><dd>소개 신청 심사, 회원 Pool 관리, 매칭 후보 선별, 미팅 일정 안내, 서비스 관련 연락, 문의 및 분쟁 대응</dd>
-                <dt>수집 항목</dt><dd>이름, 출생연도, 성별, 거주 지역, 직업군, 키, MBTI, 프로필 사진, 흡연 여부, 음주 빈도, 반려동물 여부, 관심사 및 취미, 상대 선호 조건, 전화번호</dd>
+                <dt>수집 항목</dt><dd>이름, 출생연도, 성별, 거주 지역, 직업군(기타 선택 시 직접 입력한 내용 포함), 키, MBTI, 프로필 사진, 흡연 여부, 음주 빈도, 반려동물 여부, 관심사 및 취미, 상대 선호 조건, 전화번호</dd>
                 <dt>보유 및 이용기간</dt><dd>미승인 신청자: 심사 결과 안내 후 운영정책에서 정한 기간 내 파기.<br />승인 회원: 서비스 이용 종료 또는 개인정보 삭제 요청 시까지 보관 후 파기.<br />단, 관계 법령에 따라 보존할 필요가 있는 경우 해당 법령에서 정한 기간 동안 보관할 수 있습니다.</dd>
                 <dt>동의 거부</dt><dd>동의를 거부할 권리가 있습니다. 다만 필수정보 수집에 동의하지 않을 경우 소개 신청 및 매칭 서비스 제공이 어렵습니다.</dd>
               </dl>
-            </details>
-          </div>
-          <div class="consent-item">
-            <label class="consent"><input id="privacy_optional_contact" name="privacy_optional_contact" type="checkbox" /><span>[선택] 추가 연락수단 수집 및 이용 동의</span></label>
-            <details class="consent-details">
-              <summary>추가 연락수단 이용 안내</summary>
-              <dl><dt>목적</dt><dd>운영자의 서비스 관련 연락</dd><dt>항목</dt><dd>Instagram ID, 카카오톡 ID</dd><dt>보유기간</dt><dd>서비스 이용 종료 또는 삭제 요청 시까지</dd><dt>동의 거부</dt><dd>동의하지 않아도 소개 신청에는 불이익이 없습니다.</dd></dl>
             </details>
           </div>
           <!-- TODO: 실서비스 개인정보 정책 확정 후 religion 관련 민감정보 별도 동의 처리를 검토한다. 그 전까지 현재 분리 동의 및 미동의 정보 제외를 유지한다. -->
@@ -134,7 +127,7 @@
             <h2>매칭 제안 시 상대방에게 공개되는 정보</h2>
             <dl>
               <div><dt>공개</dt><dd>프로필 사진 · 나이 · 키 · MBTI · 직업군 · 지역</dd></div>
-              <div><dt>비공개</dt><dd>이름 · 전화번호 · Instagram · 카카오톡 ID · 종교 · 흡연 / 음주 · 상세 선호조건</dd></div>
+              <div><dt>비공개</dt><dd>이름 · 전화번호 · 종교 · 흡연 / 음주 · 상세 선호조건</dd></div>
             </dl>
           </div>
         </fieldset>

@@ -17,7 +17,8 @@
     const numericHeight = Number(profile.height);
     const values = {
       name: profile.name, birthYear: profile.birthYear, location: profile.location, mbti: profile.mbti,
-      height: Number.isFinite(numericHeight) && numericHeight > 0 ? `${numericHeight}cm` : "",
+      height: profile.height === "195_plus" || numericHeight >= 195
+        ? "195cm이상" : Number.isFinite(numericHeight) && numericHeight > 0 ? `${numericHeight}cm` : "",
     };
     Object.entries(values).forEach(([key, value]) => {
       const target = card.querySelector(`[data-profile="${key}"]`);
@@ -75,16 +76,32 @@
 
   const currentYear = new Date().getFullYear();
   const birthYear = form.querySelector("[data-birth-year]");
-  for (let age = 20; age <= 49; age += 1) {
+  // Birth-year choices only; exact international age requires month/day as well.
+  for (let age = 20; age <= 40; age += 1) {
     birthYear.add(new Option(`${currentYear - age}년`, String(currentYear - age)));
   }
   const height = form.querySelector("[data-height]");
-  for (let value = 145; value <= 200; value += 1) {
+  for (let value = 145; value < 195; value += 1) {
     height.add(new Option(`${value}cm`, String(value)));
   }
+  height.add(new Option("195cm이상", "195_plus"));
   form.querySelectorAll("[data-age-select]").forEach((select) => {
-    for (let age = 20; age <= 49; age += 1) select.add(new Option(`${age}세`, String(age)));
+    for (let age = 20; age <= 40; age += 1) select.add(new Option(`만 ${age}세`, String(age)));
   });
+
+  const jobCategory = form.elements.job_category;
+  const jobOther = form.elements.job_other;
+  function updateJobOther(focusInput = false) {
+    const needsDetails = jobCategory.value === "기타";
+    jobOther.closest(".field").hidden = !needsDetails;
+    jobOther.disabled = !needsDetails;
+    jobOther.required = needsDetails;
+    clearError(jobOther);
+    jobOther.setCustomValidity("");
+    if (needsDetails && focusInput) jobOther.focus();
+  }
+  jobCategory.addEventListener("change", () => updateJobOther(true));
+  updateJobOther();
 
   const regions = {
     daejeon: ["동구", "중구", "서구", "대덕구", "유성구"],
@@ -345,8 +362,6 @@
   const consentState = form.querySelector("[data-consent-state]");
   function updateConsentState() {
     const excluded = [];
-    if (!form.elements.privacy_optional_contact.checked &&
-        (form.elements.instagram.value.trim() || form.elements.kakao_id.value.trim())) excluded.push("추가 연락수단");
     if (!form.elements.sensitive_religion_consent.checked && form.elements.religion.value) excluded.push("종교");
     consentState.textContent = excluded.length
       ? `${excluded.join(" · ")} 정보는 선택 동의 전까지 제출 대상에서 제외됩니다.`
@@ -355,10 +370,6 @@
   // Any future FormData submission must omit optional data without its separate consent.
   form.addEventListener("formdata", (event) => {
     if (croppedFile) event.formData.set("profile_photo", croppedFile);
-    if (!form.elements.privacy_optional_contact.checked) {
-      event.formData.delete("instagram");
-      event.formData.delete("kakao_id");
-    }
     if (!form.elements.sensitive_religion_consent.checked) event.formData.delete("religion");
   });
   // TODO: 실제 전송 연결 시 서버에서도 필수 동의와 선택정보 제외를 검증하고 동의 문서 버전·시각을 기록한다.
