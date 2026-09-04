@@ -43,5 +43,5 @@ const server = createServer(async (request, response) => {
 })
 
 server.listen(port, '127.0.0.1', () => {
-  console.log(`무지개색의 남녀 웹사이트: http://localhost:${port}`)
+  console.log(`대.세.는 소개팅 웹사이트: http://localhost:${port}`)
 })

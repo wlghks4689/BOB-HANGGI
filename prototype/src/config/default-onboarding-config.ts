@@ -40,11 +40,11 @@ const baseNote: DeveloperNoteConfig = {
 export const DEFAULT_ONBOARDING_CONFIG: OnboardingConfig = {
   schemaVersion: 1,
   brand: {
-    name: '무지개색의 남녀',
+    name: '대.세.는 소개팅',
     labTitle: 'ONBOARDING LAB',
   },
   matchingMode: {
-    eyebrow: '무지개색의 남녀 · 시작 방식',
+    eyebrow: '대.세.는 소개팅 · 시작 방식',
     headline: '어떤 만남으로 시작하시겠어요?',
     description: '지금 더 끌리는 시작을 골라주세요. 두 방식 모두 좋은 만남으로 이어질 수 있어요.',
     options: [

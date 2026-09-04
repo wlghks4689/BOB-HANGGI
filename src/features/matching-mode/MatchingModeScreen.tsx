@@ -49,7 +49,7 @@ export function MatchingModeScreen() {
       }
     >
       <View style={styles.intro}>
-        <Text style={styles.brand}>무지개색의 남녀</Text>
+        <Text style={styles.brand}>대.세.는 소개팅</Text>
         <Text style={styles.title}>어떤 만남으로{`\n`}시작하시겠어요?</Text>
         <Text style={styles.description}>
           지금 더 끌리는 시작을 골라주세요.{`\n`}두 방식 모두 좋은 만남으로 이어질 수 있어요.

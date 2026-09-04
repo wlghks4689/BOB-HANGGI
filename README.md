@@ -1,57 +1,62 @@
-# 무지개색의 남녀
+# 대.세.는 소개팅
 
-대전·세종 프라이빗 큐레이션 매칭 서비스 **무지개색의 남녀**의 기획·검증용 프로젝트입니다.
+DAEJEON · SEJONG PRIVATE MATCHING
 
-> 폴더명 `BOBHANGGI`와 GitHub 저장소명 `BOB-HANGGI`는 기존 이름을 유지합니다.
+대전·세종 소개 신청과 운영자 수동 매칭을 위한 Vanilla HTML/CSS/JavaScript MVP 프론트엔드입니다.
+폴더명 `BOBHANGGI`, GitHub 저장소명 `BOB-HANGGI` 및 앱 내부 식별자는 유지합니다.
 
-## 프로젝트 구성
+## 현재 서비스 범위
 
-- `index.html` — 프라이빗 매칭 랜딩페이지
-- `apply.html` — 멤버십 심사 신청 프로토타입
-- `css/style.css`, `js/main.js` — 정적 웹사이트 디자인과 동작
-- `App.tsx`, `src/` — Expo 기반 모바일 온보딩 앱
-- `prototype/` — 문구·디자인·플로우를 브라우저에서 수정하는 Vite 프로토타입 랩
-- `feedback.html`, `css/feedback.css` — 기존 웹 피드백 페이지
+- `index.html`: 제공된 메인 원본 이미지 한 장. 이미지 속 신청 버튼에 투명 링크 영역을 연결하며, 비율을 유지해 화면 안에 전체 표시합니다.
+- `apply.html`: 기본 정보, 매칭 정보, 상대 조건, 연락 수단, 개인정보 동의, 신청하기.
+- `css/style.css`, `js/main.js`: 모바일 레이아웃, 지역 연동, 원본 프로필 카드, 사진 구도 조정, 입력 검증.
+- `assets/landing-original.png`, `assets/profile-card-original.png`: 사용자가 제공한 PNG 원본 그대로 보관합니다.
+- `docs/love-color-questions.md`: 기존 질문 20개와 답변·점수 보관용. 사이트에서 불러오지 않음.
+- `feedback.html`: 기존 피드백 페이지. 메인 신청 흐름에서는 연결하지 않음.
 
-현재는 프런트엔드 프로토타입이며 실제 회원 로그인, 데이터베이스, 결제, 본인인증, 예약 API는 연결하지 않습니다.
+**실제 접수는 아직 연결되지 않았습니다.** 제출 시 입력 확인만 수행하며 네트워크 전송, 브라우저 저장, 개인정보 로그를 남기지 않습니다.
+기존 `App.tsx`, `src/`, `prototype/`는 이전 기획 실험 자료로 유지하며 현재 MVP 실행에는 필요하지 않습니다. 새 프레임워크는 추가하지 않습니다.
 
-## 실행 방법
-
-PowerShell의 실행 정책 영향을 피하기 위해 `npm` 대신 `npm.cmd` 명령을 사용할 수 있습니다.
-
-### 정적 웹사이트
+## 실행
 
 ```powershell
 npm.cmd run website
 ```
 
-기본 주소: `http://localhost:4174/`
+주소: `http://localhost:4174/`
 
-### Expo 앱
+## 주요 편집 위치
 
-```powershell
-npm.cmd start
-```
+- 메인 화면 문구·디자인: `assets/landing-original.png`에 포함되어 있습니다. 원본을 교체할 때 `index.html` 이미지 비율과 `css/style.css`의 `.poster-apply` 클릭 영역도 확인하세요.
+- 신청 항목과 동의 안내: `apply.html`
+- 색상·폭·간격: `css/style.css`
+- 지역 목록·검증·선택 동의 처리: `js/main.js`
 
-### 온보딩 프로토타입 랩
+## 프로필 카드와 사진 구도
 
-```powershell
-npm.cmd --prefix prototype run dev
-```
+- 제공된 카드의 원본 명조 제목·로고·테두리·사진·아이콘은 유지합니다. 정보 영역은 나눔고딕으로 역할을 분리하며 항목명은 400 / 11px / `#727260`, 실제 값은 700 / 14px / `#2F3329`입니다. 모든 화면 크기에서 동일한 글자 크기를 사용합니다. 모바일에서는 신청서 아래 ‘내 프로필 미리보기’를 펼쳐 확인합니다.
+- 사진 선택 후 드래그(마우스·터치), 확대, 좌우·상하 슬라이더로 구도를 설정합니다. ‘이 구도로 적용’하면 카드 사진 비율로 잘린 결과가 표시됩니다.
+- ‘구도 다시 조정’은 잘린 결과가 아니라 보관 중인 업로드 원본에서 다시 시작합니다. 취소하면 이전에 적용한 사진·구도를 유지합니다.
+- 사진은 브라우저 메모리에서만 처리합니다. 향후 제출용 `FormData`에는 구도를 적용한 1780×1090 JPEG를 넣습니다. 새로고침하면 입력값과 사진은 사라집니다.
+- 카드 제목·장식·아이콘은 원본 이미지에 포함되어 있고, 교체 영역의 위치는 `css/style.css`의 `.member-photo`, `.card-label`, `.card-value`, `.card-decisions`에서 관리합니다.
+- 하단은 ‘만나볼게요 / 패스할게요’ 두 칸에 나눔고딕 700을 적용합니다. 본인 프로필 미리보기이므로 버튼은 비활성화되어 있으며 실제 선택·전송 기능은 없습니다.
+- 카드 글꼴은 `assets/fonts/`에 포함하고 배포 라이선스도 함께 보관합니다. 현재 정보 영역은 `NanumGothic-Regular.ttf`와 `NanumGothic-Bold.ttf`를 사용합니다.
+- 정보는 두 열·세 행으로 동일한 기준선에 정렬하며, 매우 긴 값은 글자를 축소하지 않고 말줄임합니다. 전체 값은 DOM 텍스트와 title에 유지합니다.
+
+## 실제 운영 연결 전 확인
+
+- 접수 저장소 및 운영자 조회·삭제 절차를 연결해야 합니다.
+- 필수 동의 및 선택 동의에 따른 정보 제외를 서버에서도 검증해야 합니다.
+- 현재 `FormData` 생성 시 선택 동의 없는 Instagram·카카오톡 ID·종교는 제외됩니다.
+- 고지한 보유기간에 맞는 파기 기능, 실제 운영 주체와 동의 문서 버전·시각 기록이 필요합니다.
+- 특정 상대에게 프로필을 제공하기 전 제3자 제공 동의 UI를 별도로 구현해야 합니다.
+- 동의 문구는 기획서 기준 초안이며 운영 방식에 맞는 검토 후 사용해야 합니다.
 
 ## 검사
 
 ```powershell
+node --check js/main.js
 npm.cmd run typecheck
-npm.cmd run test:questions
 npm.cmd --prefix prototype run build
 npm.cmd --prefix prototype run lint
 ```
-
-## 주요 편집 위치
-
-- 웹 색상과 간격: `css/style.css` 상단의 CSS 변수 및 반응형 규칙
-- 웹 문구: `index.html`, `apply.html`
-- 신청서 동작: `js/main.js`
-- 앱 디자인 토큰: `src/theme/tokens.ts`
-- 프로토타입 기본 문구: `prototype/src/config/default-onboarding-config.ts`

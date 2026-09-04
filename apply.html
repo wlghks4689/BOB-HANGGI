@@ -3,175 +3,175 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta
-      name="description"
-      content="무지개색의 남녀 대전·세종 프라이빗 매칭 멤버십 심사 신청서"
-    />
-    <title>멤버십 심사 신청 | 무지개색의 남녀</title>
+    <meta name="description" content="대.세.는 소개팅 — 대전·세종 소개 신청" />
+    <title>소개 신청 | 대.세.는 소개팅</title>
+    <link rel="icon" href="data:," />
     <link rel="stylesheet" href="css/style.css" />
     <script src="js/main.js" defer></script>
   </head>
   <body class="application-page">
     <a class="skip-link" href="#application-main">신청서 바로가기</a>
-
     <header class="application-header">
-      <div class="shell header-inner">
-        <a class="brand" href="index.html" aria-label="무지개색의 남녀 홈">
-          <strong>무지개색의 남녀</strong>
-          <span>PRIVATE MATCHING</span>
-        </a>
-        <a class="back-link" href="index.html">홈으로</a>
+      <div class="application-shell header-inner">
+        <a class="brand" href="index.html">대.세.는 소개팅</a>
+        <a class="back-link" href="index.html">처음으로</a>
       </div>
     </header>
 
     <main id="application-main" class="application-main">
-      <div class="application-shell">
-        <header class="application-title">
-          <p class="eyebrow">DAEJEON · SEJONG MEMBERSHIP</p>
-          <h1>MEMBERSHIP<br />APPLICATION</h1>
-          <p>심사에 필요한 정보만 입력해주세요.</p>
-        </header>
-
-        <nav class="application-index" aria-label="신청서 구성">
-          <a href="#basic-profile"><span>01</span>BASIC PROFILE</a>
-          <a href="#matching-profile"><span>02</span>MATCHING PROFILE</a>
-          <a href="#preference"><span>03</span>PREFERENCE</a>
-          <a href="#love-color"><span>04</span>LOVE COLOR</a>
-          <a href="#submit"><span>05</span>SUBMIT</a>
-        </nav>
-
-        <form class="membership-form" data-membership-form novalidate>
-          <fieldset class="form-section" id="basic-profile">
-            <legend><span>01</span>BASIC PROFILE</legend>
-            <div class="form-grid">
-              <div class="field">
-                <label for="nickname">닉네임</label>
-                <input id="nickname" name="nickname" type="text" autocomplete="nickname" required />
+      <header class="application-title application-shell"><span class="eyebrow">APPLICATION</span><h1>소개 신청</h1></header>
+      <div class="application-layout">
+      <form class="membership-form" data-membership-form novalidate>
+        <fieldset class="form-section" id="basic-profile">
+          <legend><span>01</span>기본 정보</legend>
+          <div class="form-grid">
+            <div class="field"><label for="name">이름 또는 닉네임</label><input id="name" name="name" type="text" autocomplete="name" maxlength="50" required /></div>
+              <div class="field"><label for="birth_year">출생연도</label><select id="birth_year" name="birth_year" required data-birth-year><option value="">선택해주세요</option></select></div>
+            <fieldset class="field choice-field">
+              <legend>성별</legend>
+              <div class="choice-buttons">
+                <label class="choice-option"><input class="visually-hidden" id="gender_male" name="gender" type="radio" value="male" required /><span>남자</span></label>
+                <label class="choice-option"><input class="visually-hidden" id="gender_female" name="gender" type="radio" value="female" required /><span>여자</span></label>
               </div>
-
-              <div class="field">
-                <label for="birth_year">출생연도</label>
-                <select id="birth_year" name="birth_year" required data-birth-year>
-                  <option value="">선택해주세요</option>
-                </select>
+            </fieldset>
+            <fieldset class="field choice-field">
+              <legend>지역</legend>
+              <div class="choice-buttons">
+                <label class="choice-option"><input class="visually-hidden" id="region_daejeon" name="region_city" type="radio" value="daejeon" required data-region-city /><span>대전</span></label>
+                <label class="choice-option"><input class="visually-hidden" id="region_sejong" name="region_city" type="radio" value="sejong" required data-region-city /><span>세종</span></label>
               </div>
-
-              <div class="field">
-                <label for="gender">성별</label>
-                <select id="gender" name="gender" required>
-                  <option value="">선택해주세요</option>
-                  <option value="male">남성</option>
-                  <option value="female">여성</option>
-                </select>
+            </fieldset>
+            <div class="field"><label for="region_detail">상세 지역</label><select id="region_detail" name="region_detail" required data-region-detail disabled><option value="">먼저 지역을 선택해주세요</option></select></div>
+              <div class="field"><label for="job_category">직업군</label><select id="job_category" name="job_category" required><option value="">선택해주세요</option><option>IT / 개발</option><option>경영 / 사무</option><option>금융</option><option>전문직</option><option>의료</option><option>교육</option><option>공무원 / 공공기관</option><option>연구 / 기술</option><option>디자인 / 예술</option><option>미디어</option><option>영업 / 마케팅</option><option>서비스</option><option>자영업 / 사업</option><option>학생</option><option>기타</option></select></div>
+              <div class="field"><label for="height">키</label><select id="height" name="height" required data-height><option value="">선택해주세요</option></select></div>
+              <div class="field"><label for="mbti">MBTI</label><select id="mbti" name="mbti" required><option value="">선택해주세요</option><option>ISTJ</option><option>ISFJ</option><option>INFJ</option><option>INTJ</option><option>ISTP</option><option>ISFP</option><option>INFP</option><option>INTP</option><option>ESTP</option><option>ESFP</option><option>ENFP</option><option>ENTP</option><option>ESTJ</option><option>ESFJ</option><option>ENFJ</option><option>ENTJ</option></select></div>
+            <div class="field field-full photo-field">
+              <label for="profile_photo">프로필 사진 <span>1장</span></label>
+              <div class="photo-upload-control">
+                <input class="visually-hidden" id="profile_photo" name="profile_photo" type="file" accept="image/jpeg,image/png,image/webp" required data-photo-input aria-describedby="photo-message" />
+                <label class="photo-upload-box" for="profile_photo"><strong data-upload-label>사진 선택하기</strong><span>JPG · PNG · WEBP</span></label>
               </div>
-
-              <div class="field"><label for="region_city">거주지역</label><select id="region_city" name="region_city" required data-region-city><option value="">시 선택</option><option value="daejeon">대전</option><option value="sejong">세종</option></select></div>
-              <div class="field"><label for="region_detail">상세지역</label><select id="region_detail" name="region_detail" required data-region-detail disabled><option value="">먼저 시를 선택해주세요</option></select></div>
-
-              <div class="field">
-                <label for="job_category">직업군</label>
-                <select id="job_category" name="job_category" required>
-                  <option value="">선택해주세요</option>
-                  <option>IT / 개발</option><option>경영 / 사무</option><option>금융</option><option>전문직</option>
-                  <option>의료</option><option>교육</option><option>공무원 / 공공기관</option><option>연구 / 기술</option>
-                  <option>디자인 / 예술</option><option>미디어</option><option>영업 / 마케팅</option><option>서비스</option>
-                  <option>자영업 / 사업</option><option>학생</option><option>기타</option>
-                </select>
-              </div>
-
-              <div class="field">
-                <label for="height">키</label>
-                <select id="height" name="height" required data-height>
-                  <option value="">선택해주세요</option>
-                </select>
-              </div>
-
-              <div class="field">
-                <label for="mbti">MBTI</label>
-                <select id="mbti" name="mbti" required>
-                  <option value="">선택해주세요</option>
-                  <option>ISTJ</option><option>ISFJ</option><option>INFJ</option><option>INTJ</option>
-                  <option>ISTP</option><option>ISFP</option><option>INFP</option><option>INTP</option>
-                  <option>ESTP</option><option>ESFP</option><option>ENFP</option><option>ENTP</option>
-                  <option>ESTJ</option><option>ESFJ</option><option>ENFJ</option><option>ENTJ</option>
-                </select>
-              </div>
-
-              <div class="field field-full photo-field">
-                <label for="profile_photo">프로필 사진 <span>1장</span></label>
-                <div class="photo-control">
-                  <label class="photo-upload" for="profile_photo">
-                    <span>사진 선택</span>
-                    <small>JPG, PNG 또는 WEBP</small>
-                  </label>
-                  <input
-                    id="profile_photo"
-                    name="profile_photo"
-                    type="file"
-                    accept="image/jpeg,image/png,image/webp"
-                    required
-                    data-photo-input
-                  />
-                  <figure class="photo-preview" hidden data-photo-preview>
-                    <img src="" alt="선택한 프로필 사진 미리보기" />
-                    <figcaption data-photo-name></figcaption>
-                  </figure>
-                </div>
-                <p class="field-message" aria-live="polite" data-photo-message></p>
-              </div>
+              <div id="photo-message" class="field-message" aria-live="polite" data-photo-message></div>
+              <figure class="photo-preview" hidden data-photo-preview><img alt="선택한 프로필 사진 미리보기" /><figcaption><span data-photo-name></span><button class="photo-edit-button" type="button" data-edit-photo>구도 다시 조정</button></figcaption></figure>
             </div>
-          </fieldset>
+          </div>
+        </fieldset>
 
-          <fieldset class="form-section" id="matching-profile">
-            <legend><span>02</span>MATCHING PROFILE</legend>
-            <div class="form-grid">
-              <div class="field"><label for="smoking">흡연 여부</label><select id="smoking" name="smoking" required><option value="">선택해주세요</option><option value="none">비흡연</option><option value="sometimes">가끔</option><option value="yes">흡연</option></select></div>
-              <div class="field"><label for="religion">종교</label><select id="religion" name="religion" required><option value="">선택해주세요</option><option>무교</option><option>기독교</option><option>천주교</option><option>불교</option><option>기타</option></select></div>
+        <hr class="section-divider" aria-hidden="true" />
+        <fieldset class="form-section" id="matching-profile">
+          <legend><span>02</span>매칭 정보</legend>
+          <div class="form-grid">
+              <div class="field"><label for="smoking">흡연 여부</label><select id="smoking" name="smoking" required><option value="">선택해주세요</option><option value="yes">흡연</option><option value="vape">전자담배</option><option value="none">비흡연</option></select></div>
+              <div class="field"><label for="religion">종교 <span>선택</span></label><select id="religion" name="religion" ><option value="">선택해주세요</option><option>무교</option><option>기독교</option><option>천주교</option><option>불교</option><option>기타</option></select></div>
               <div class="field"><label for="drinking">음주 빈도</label><select id="drinking" name="drinking" required><option value="">선택해주세요</option><option value="none">마시지 않음</option><option value="monthly">월 1~2회</option><option value="weekly">주 1~2회</option><option value="often">주 3회 이상</option></select></div>
               <div class="field"><label for="pet">반려동물</label><select id="pet" name="pet" required><option value="">선택해주세요</option><option value="none">없음</option><option value="dog">강아지</option><option value="cat">고양이</option><option value="other">기타</option></select></div>
-              <div class="field"><label for="lifestyle">생활 패턴</label><select id="lifestyle" name="lifestyle" required><option value="">선택해주세요</option><option value="morning">아침형</option><option value="balanced">규칙적인 편</option><option value="night">저녁형</option><option value="variable">일정하지 않음</option></select></div>
-              <div class="field"><label for="has_car">자차 보유</label><select id="has_car" name="has_car" required><option value="">선택해주세요</option><option value="yes">보유</option><option value="no">미보유</option></select></div>
-              <div class="field"><label for="income_range">연봉 수준 <span>비공개</span></label><select id="income_range" name="income_range" required><option value="">선택해주세요</option><option value="under_3000">3,000만원 미만</option><option value="3000_4000">3,000 ~ 4,000만원</option><option value="4000_5000">4,000 ~ 5,000만원</option><option value="5000_6000">5,000 ~ 6,000만원</option><option value="6000_7000">6,000 ~ 7,000만원</option><option value="7000_8000">7,000 ~ 8,000만원</option><option value="8000_10000">8,000 ~ 1억원</option><option value="over_10000">1억원 이상</option></select><small>상대 공개 프로필에는 표시하지 않습니다.</small></div>
-              <div class="field field-full"><label for="interests">관심사 / 취미</label><textarea id="interests" name="interests" rows="4" placeholder="평소 즐기는 활동을 자유롭게 적어주세요." required></textarea></div>
+              <div class="field"><label for="preferred_age_relation">선호 나이 관계</label><select id="preferred_age_relation" name="preferred_age_relation" required><option value="">선택해주세요</option><option value="older">연상</option><option value="younger">연하</option><option value="same">동갑</option><option value="any">상관없음</option></select></div>
+            <div class="interest-fields">
+              <span class="field-group-label">관심사 / 취미</span>
+              <div class="field"><label class="visually-hidden" for="interest_1">관심사 / 취미 1</label><input id="interest_1" name="interest_1" type="text" maxlength="30" placeholder="러닝" required /></div>
+              <div class="field"><label class="visually-hidden" for="interest_2">관심사 / 취미 2 (선택)</label><input id="interest_2" name="interest_2" type="text" maxlength="30" placeholder="여행 (선택)" /></div>
+              <div class="field"><label class="visually-hidden" for="interest_3">관심사 / 취미 3 (선택)</label><input id="interest_3" name="interest_3" type="text" maxlength="30" placeholder="커피 (선택)" /></div>
             </div>
-          </fieldset>
+          </div>
+        </fieldset>
 
-          <fieldset class="form-section" id="preference">
-            <legend><span>03</span>PREFERENCE</legend>
-            <div class="form-grid">
-              <div class="field field-full"><label for="priority_condition">가장 우선시하는 조건</label><textarea id="priority_condition" name="priority_condition" rows="4" required></textarea></div>
-              <div class="field field-full"><label for="preferred_condition">있으면 좋은 조건</label><textarea id="preferred_condition" name="preferred_condition" rows="4"></textarea></div>
+        <hr class="section-divider" aria-hidden="true" />
+        <fieldset class="form-section" id="preference">
+          <legend><span>03</span>상대 조건</legend>
+          <div class="form-grid">
+            <div class="field field-full"><label for="priority_condition">가장 우선하는 조건</label><textarea id="priority_condition" name="priority_condition" rows="3" maxlength="1000" required></textarea></div>
+            <div class="field field-full"><label for="preferred_condition">있으면 좋은 조건 <span>선택</span></label><textarea id="preferred_condition" name="preferred_condition" rows="3" maxlength="1000"></textarea></div>
+            <div class="age-range">
               <div class="field"><label for="preferred_age_min">희망 최소 나이</label><select id="preferred_age_min" name="preferred_age_min" required data-age-select><option value="">선택해주세요</option></select></div>
               <div class="field"><label for="preferred_age_max">희망 최대 나이</label><select id="preferred_age_max" name="preferred_age_max" required data-age-select><option value="">선택해주세요</option></select></div>
             </div>
-          </fieldset>
+          </div>
+        </fieldset>
 
-          <fieldset class="form-section love-color-section" id="love-color">
-            <legend><span>04</span>LOVE COLOR</legend>
-            <div class="love-color-intro"><p class="eyebrow">20 SCENARIOS · ONE COLOR</p><h2>관계에서 중요하게 생각하는 방식을 알려주세요.</h2><p>정답은 없습니다. 실제 나의 생각과 가장 가까운 답을 골라주세요.</p></div>
-            <div class="love-question-list" data-love-questions></div>
-            <input type="hidden" name="love_color" value="" data-love-color-value />
-          </fieldset>
+        <hr class="section-divider" aria-hidden="true" />
+        <fieldset class="form-section" id="contact">
+          <legend><span>04</span>연락 수단</legend>
+          <div class="form-grid">
+            <div class="field field-full"><label for="phone">연락처</label><input id="phone" name="phone" type="tel" autocomplete="tel" inputmode="tel" placeholder="010-0000-0000" maxlength="20" required /></div>
+            <div class="field"><label for="instagram">Instagram <span>선택</span></label><input id="instagram" name="instagram" type="text" placeholder="@username" maxlength="50" autocapitalize="none" spellcheck="false" /></div>
+            <div class="field"><label for="kakao_id">카카오톡 ID <span>선택</span></label><input id="kakao_id" name="kakao_id" type="text" placeholder="Kakao ID" maxlength="50" autocapitalize="none" spellcheck="false" /></div>
+          </div>
+        </fieldset>
 
-          <section class="submit-section" id="submit" aria-labelledby="submit-title">
-            <span>05</span>
-            <div>
-              <h2 id="submit-title">SUBMIT</h2>
-              <p>제출 후 운영자가 신청 내용을 검토합니다. 현재 프로토타입에서는 실제 정보가 전송되지 않습니다.</p>
-              <label class="consent"><input type="checkbox" name="application_consent" required /><span>심사 목적의 정보 수집 및 이용 안내를 확인했습니다.</span></label>
-              <button class="button button-primary submit-button" type="submit">멤버십 심사 신청</button>
-              <p class="form-status" role="status" tabindex="-1" data-form-status></p>
-            </div>
-          </section>
-        </form>
+        <hr class="section-divider" aria-hidden="true" />
+        <fieldset class="form-section" id="privacy">
+          <legend><span>05</span>개인정보 동의</legend>
+          <!-- TODO: 실서비스 Match Proposal 단계에서 개인정보 제3자 제공 동의 UI 구현. -->
+          <div class="consent-item">
+            <label class="consent"><input id="privacy_required" name="privacy_required" type="checkbox" required /><span>[필수] 개인정보 수집 및 이용 동의</span></label>
+            <details class="consent-details">
+              <summary>수집 항목 및 이용 안내</summary>
+              <dl>
+                <dt>목적</dt><dd>소개 신청 심사, 회원 Pool 관리, 매칭 후보 선별, 미팅 일정 안내, 서비스 관련 연락, 문의 및 분쟁 대응</dd>
+                <dt>수집 항목</dt><dd>이름, 출생연도, 성별, 거주 지역, 직업군, 키, MBTI, 프로필 사진, 흡연 여부, 음주 빈도, 반려동물 여부, 관심사 및 취미, 상대 선호 조건, 전화번호</dd>
+                <dt>보유 및 이용기간</dt><dd>미승인 신청자: 심사 결과 안내 후 운영정책에서 정한 기간 내 파기.<br />승인 회원: 서비스 이용 종료 또는 개인정보 삭제 요청 시까지 보관 후 파기.<br />단, 관계 법령에 따라 보존할 필요가 있는 경우 해당 법령에서 정한 기간 동안 보관할 수 있습니다.</dd>
+                <dt>동의 거부</dt><dd>동의를 거부할 권리가 있습니다. 다만 필수정보 수집에 동의하지 않을 경우 소개 신청 및 매칭 서비스 제공이 어렵습니다.</dd>
+              </dl>
+            </details>
+          </div>
+          <div class="consent-item">
+            <label class="consent"><input id="privacy_optional_contact" name="privacy_optional_contact" type="checkbox" /><span>[선택] 추가 연락수단 수집 및 이용 동의</span></label>
+            <details class="consent-details">
+              <summary>추가 연락수단 이용 안내</summary>
+              <dl><dt>목적</dt><dd>운영자의 서비스 관련 연락</dd><dt>항목</dt><dd>Instagram ID, 카카오톡 ID</dd><dt>보유기간</dt><dd>서비스 이용 종료 또는 삭제 요청 시까지</dd><dt>동의 거부</dt><dd>동의하지 않아도 소개 신청에는 불이익이 없습니다.</dd></dl>
+            </details>
+          </div>
+          <!-- TODO: 실서비스 개인정보 정책 확정 후 religion 관련 민감정보 별도 동의 처리를 검토한다. 그 전까지 현재 분리 동의 및 미동의 정보 제외를 유지한다. -->
+          <div class="consent-item">
+            <label class="consent"><input id="sensitive_religion_consent" name="sensitive_religion_consent" type="checkbox" /><span>[선택] 민감정보 수집 및 이용 동의</span></label>
+            <details class="consent-details">
+              <summary>종교 정보 이용 안내</summary>
+              <dl><dt>목적</dt><dd>회원의 상대 선호 및 매칭 참고</dd><dt>항목</dt><dd>종교</dd><dt>보유기간</dt><dd>서비스 이용 종료 또는 삭제 요청 시까지</dd><dt>동의 거부</dt><dd>동의를 거부할 수 있으며, 동의하지 않아도 서비스 신청은 가능합니다.</dd></dl>
+            </details>
+          </div>
+          <div class="consent-state" role="status" data-consent-state></div>
+          <div class="profile-disclosure">
+            <h2>매칭 제안 시 상대방에게 공개되는 정보</h2>
+            <dl>
+              <div><dt>공개</dt><dd>프로필 사진 · 나이 · 키 · MBTI · 직업군 · 지역</dd></div>
+              <div><dt>비공개</dt><dd>이름 · 전화번호 · Instagram · 카카오톡 ID · 종교 · 흡연 / 음주 · 상세 선호조건</dd></div>
+            </dl>
+          </div>
+        </fieldset>
+
+        <hr class="section-divider" aria-hidden="true" />
+        <section class="form-section submit-section" aria-labelledby="submit-title">
+          <h2 id="submit-title" class="section-title"><span>06</span>신청하기</h2>
+          <button class="button button-primary" type="submit">소개 신청하기</button>
+          <div class="form-status" role="status" tabindex="-1" data-form-status></div>
+        </section>
+      </form>
+      <aside class="profile-preview-panel" data-profile-panel hidden aria-label="본인 확인용 프로필 미리보기">
+        <details class="profile-preview-details" data-preview-details>
+          <summary>내 프로필 미리보기</summary>
+          <div class="profile-preview-content">
+            <span class="preview-state" data-preview-state>예시 프로필</span>
+            <div data-profile-card-mount></div>
+          </div>
+        </details>
+      </aside>
       </div>
+      <footer class="application-footer application-shell">대.세.는 소개팅 <span>/ Daejeon · Sejong</span></footer>
     </main>
-
-    <footer class="site-footer application-footer">
-      <div class="shell footer-inner">
-        <div class="brand brand-footer"><strong>무지개색의 남녀</strong><span>PRIVATE MATCHING</span></div>
-        <small>© <span data-current-year></span> 무지개색의 남녀</small>
+    <dialog class="crop-dialog" data-crop-dialog aria-labelledby="crop-title" aria-describedby="crop-help">
+      <div class="crop-heading"><h2 id="crop-title">사진 구도 조정</h2><button type="button" class="crop-close" data-crop-cancel aria-label="구도 조정 취소">×</button></div>
+      <p id="crop-help">사진을 드래그하거나 아래 슬라이더로 조정하세요.<br />보이는 영역 그대로 프로필 카드에 들어갑니다.</p>
+      <div class="crop-viewport" data-crop-viewport><img data-crop-image alt="구도를 조정 중인 사진" draggable="false" /></div>
+      <div class="crop-controls">
+        <label for="crop-zoom">확대 <output data-crop-zoom-value>100%</output></label>
+        <input id="crop-zoom" data-crop-zoom type="range" min="1" max="3" step="0.01" value="1" />
+        <label for="crop-x">좌우 위치</label>
+        <input id="crop-x" data-crop-x type="range" min="0" max="100" step="0.1" value="50" />
+        <label for="crop-y">상하 위치</label>
+        <input id="crop-y" data-crop-y type="range" min="0" max="100" step="0.1" value="50" />
       </div>
-    </footer>
+      <p class="field-message" data-crop-message role="status"></p>
+      <div class="crop-actions"><button class="button crop-reset" type="button" data-crop-reset>초기화</button><button class="button crop-save" type="button" data-crop-save>이 구도로 적용</button></div>
+    </dialog>
   </body>
 </html>
