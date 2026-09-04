@@ -221,11 +221,28 @@ h1, h2, p { margin: 0; }
 }
 /* Original frame, photo and icons are retained; text areas are editable overlays. */
 .profile-card {
+  --card-rule: #9a9f87;
+  --card-action-rule: #858e72;
   position: relative; width: min(100%, 440px); margin-inline: auto; container-type: inline-size;
   color: #343b29; font-family: "Profile Myeongjo", Georgia, serif; font-weight: 400;
 }
 .profile-card-art { width: 100%; height: auto; }
 .profile-card-overlay { position: absolute; inset: 0; }
+/* Keep separators above opaque text masks, independently of the raster artwork. */
+.profile-card-overlay::after {
+  content: ""; position: absolute; z-index: 2; pointer-events: none;
+  left: 8.93%; right: 8.93%; top: 69.2%; height: calc(10.08% + 1px);
+  border-block: 1px solid var(--card-rule);
+  box-shadow: 0 -1px 0 #faf8f4, inset 0 -1px 0 #faf8f4;
+}
+.profile-card-overlay::before {
+  content: ""; position: absolute; z-index: 2; pointer-events: none;
+  left: 49.63%; top: 61.15%; width: 1px; height: 26.5%;
+  background:
+    linear-gradient(var(--card-rule), var(--card-rule)) top / 100% 25.1% no-repeat,
+    linear-gradient(var(--card-rule), var(--card-rule)) center / 100% 25.1% no-repeat,
+    linear-gradient(var(--card-rule), var(--card-rule)) bottom / 100% 25.1% no-repeat;
+}
 .profile-card:not([data-personalized]) .member-photo { display: none; }
 .member-photo {
   position: absolute; left: 9.024%; top: 20.097%; width: 81.952%; height: 37.638%;
@@ -256,9 +273,11 @@ h1, h2, p { margin: 0; }
 .card-value[data-profile="favorites"], .card-value[data-profile="location"] { top: 74.4%; }
 .card-value[data-profile="mbti"], .card-value[data-profile="height"] { top: 84.5%; }
 .card-decisions {
-  position: absolute; left: 4.25%; top: 90.1%; width: 91.5%; height: 7.9%;
+  position: absolute; left: 4.25%; top: 89.7%; width: 91.5%; height: 8.3%;
   display: grid; grid-template-columns: repeat(2, minmax(0, 1fr));
-  overflow: hidden; border-radius: 0 0 3cqw 3cqw; background: #e6e9df;
+  overflow: hidden; border-top: 1.5px solid var(--card-action-rule);
+  box-shadow: 0 -1px 0 #faf8f4;
+  border-radius: 0 0 3cqw 3cqw; background: #e6e9df;
 }
 .card-decisions button {
   display: grid; place-items: center; width: 100%; min-width: 0; padding: 0;
@@ -266,7 +285,7 @@ h1, h2, p { margin: 0; }
   font-family: "Profile Gothic", var(--sans); font-size: clamp(15px, 4.1cqw, 18px); font-weight: 700;
   opacity: 1; -webkit-text-fill-color: currentColor;
 }
-.card-decisions button + button { border-left: 1px solid #b6bca6; color: #474d3d; }
+.card-decisions button + button { border-left: 1.5px solid var(--card-action-rule); color: #474d3d; }
 @container (max-width: 300px) {
   .card-decisions button { font-size: 14px; }
 }
