@@ -29,7 +29,7 @@ export function PostOnboardingPreview({ config, screen, nickname, mode, onNaviga
   if (screen === 'serviceGuide') {
     const guide = content.guide
     return <div className="phone-screen service-guide-screen">
-      <div className="guide-ghost-home"><span>잘되면 밥한끼</span><b>오늘의 소개를 준비하고 있어요.</b><i /></div>
+      <div className="guide-ghost-home"><span>무지개색의 남녀</span><b>오늘의 소개를 준비하고 있어요.</b><i /></div>
       <main className="service-guide-backdrop">
         <section className="service-guide-sheet" aria-label="서비스 이용 안내">
           <div className="guide-handle" />
@@ -132,7 +132,7 @@ function AppFrame({ active, config, onNavigate, children, header, compact = fals
   mainClassName?: string
 }) {
   return <div className={`phone-screen service-app-screen ${compact ? 'is-compact' : ''}`}>
-    {header ?? <header className="service-brand-header"><b>잘되면 밥한끼</b><span>••</span></header>}
+    {header ?? <header className="service-brand-header"><b>무지개색의 남녀</b><span>••</span></header>}
     <main className={mainClassName}>{children}</main>
     <footer><nav className="service-tabs" aria-label="앱 메뉴">
       <TabButton active={active === 'home'} icon="⌂" label={config.postOnboarding.navigation.home} onClick={() => onNavigate('home')} />

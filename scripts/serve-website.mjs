@@ -43,5 +43,5 @@ const server = createServer(async (request, response) => {
 })
 
 server.listen(port, '127.0.0.1', () => {
-  console.log(`잘되면 밥한끼 웹사이트: http://localhost:${port}`)
+  console.log(`무지개색의 남녀 웹사이트: http://localhost:${port}`)
 })

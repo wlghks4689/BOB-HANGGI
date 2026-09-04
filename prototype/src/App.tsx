@@ -146,7 +146,7 @@ function App() {
   return (
     <div className="lab-app">
       <header className="lab-header">
-        <div className="lab-brand"><span>잘되면 밥한끼</span><b>ONBOARDING LAB</b><i>기획용 · 브라우저에만 저장</i></div>
+        <div className="lab-brand"><span>무지개색의 남녀</span><b>ONBOARDING LAB</b><i>기획용 · 브라우저에만 저장</i></div>
         <div className="view-switch" role="tablist"><button className={viewMode === 'preview' ? 'is-active' : ''} onClick={() => setViewMode('preview')}>PREVIEW</button><button className={viewMode === 'edit' ? 'is-active' : ''} onClick={() => setViewMode('edit')}>EDIT</button></div>
         <div className="header-actions">
           <span className={`save-status ${saveStatus}`}>{saveStatus === 'saved' ? '저장됨 ✓' : '저장 중…'}</span>

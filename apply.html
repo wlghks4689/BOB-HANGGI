@@ -5,9 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta
       name="description"
-      content="잘되면 밥한끼 프라이빗 매칭 멤버십 심사 신청서"
+      content="무지개색의 남녀 대전·세종 프라이빗 매칭 멤버십 심사 신청서"
     />
-    <title>멤버십 심사 신청 | 잘되면 밥한끼</title>
+    <title>멤버십 심사 신청 | 무지개색의 남녀</title>
     <link rel="stylesheet" href="css/style.css" />
     <script src="js/main.js" defer></script>
   </head>
@@ -16,8 +16,8 @@
 
     <header class="application-header">
       <div class="shell header-inner">
-        <a class="brand" href="index.html" aria-label="잘되면 밥한끼 홈">
-          <strong>잘되면 밥한끼</strong>
+        <a class="brand" href="index.html" aria-label="무지개색의 남녀 홈">
+          <strong>무지개색의 남녀</strong>
           <span>PRIVATE MATCHING</span>
         </a>
         <a class="back-link" href="index.html">홈으로</a>
@@ -27,7 +27,7 @@
     <main id="application-main" class="application-main">
       <div class="application-shell">
         <header class="application-title">
-          <p class="eyebrow">PRIVATE MEMBERSHIP</p>
+          <p class="eyebrow">DAEJEON · SEJONG MEMBERSHIP</p>
           <h1>MEMBERSHIP<br />APPLICATION</h1>
           <p>심사에 필요한 정보만 입력해주세요.</p>
         </header>
@@ -36,7 +36,8 @@
           <a href="#basic-profile"><span>01</span>BASIC PROFILE</a>
           <a href="#matching-profile"><span>02</span>MATCHING PROFILE</a>
           <a href="#preference"><span>03</span>PREFERENCE</a>
-          <a href="#submit"><span>04</span>SUBMIT</a>
+          <a href="#love-color"><span>04</span>LOVE COLOR</a>
+          <a href="#submit"><span>05</span>SUBMIT</a>
         </nav>
 
         <form class="membership-form" data-membership-form novalidate>
@@ -64,16 +65,8 @@
                 </select>
               </div>
 
-              <div class="field">
-                <label for="region">거주지역</label>
-                <select id="region" name="region" required>
-                  <option value="">선택해주세요</option>
-                  <option>서울</option><option>부산</option><option>대구</option><option>인천</option>
-                  <option>광주</option><option>대전</option><option>울산</option><option>세종</option>
-                  <option>경기</option><option>강원</option><option>충북</option><option>충남</option>
-                  <option>전북</option><option>전남</option><option>경북</option><option>경남</option><option>제주</option>
-                </select>
-              </div>
+              <div class="field"><label for="region_city">거주지역</label><select id="region_city" name="region_city" required data-region-city><option value="">시 선택</option><option value="daejeon">대전</option><option value="sejong">세종</option></select></div>
+              <div class="field"><label for="region_detail">상세지역</label><select id="region_detail" name="region_detail" required data-region-detail disabled><option value="">먼저 시를 선택해주세요</option></select></div>
 
               <div class="field">
                 <label for="job_category">직업군</label>
@@ -150,13 +143,18 @@
               <div class="field field-full"><label for="preferred_condition">있으면 좋은 조건</label><textarea id="preferred_condition" name="preferred_condition" rows="4"></textarea></div>
               <div class="field"><label for="preferred_age_min">희망 최소 나이</label><select id="preferred_age_min" name="preferred_age_min" required data-age-select><option value="">선택해주세요</option></select></div>
               <div class="field"><label for="preferred_age_max">희망 최대 나이</label><select id="preferred_age_max" name="preferred_age_max" required data-age-select><option value="">선택해주세요</option></select></div>
-              <div class="field"><label for="long_distance">장거리 가능 여부</label><select id="long_distance" name="long_distance" required data-long-distance><option value="">선택해주세요</option><option value="yes">가능</option><option value="no">불가능</option></select></div>
-              <div class="field" hidden data-long-distance-field><label for="long_distance_range">장거리 가능 범위</label><select id="long_distance_range" name="long_distance_range" disabled><option value="">선택해주세요</option><option value="same_region">동일 시/도</option><option value="nearby_region">인접 시/도</option><option value="one_hour">편도 1시간</option><option value="two_hours">편도 2시간</option><option value="anywhere">거리 무관</option></select></div>
             </div>
           </fieldset>
 
+          <fieldset class="form-section love-color-section" id="love-color">
+            <legend><span>04</span>LOVE COLOR</legend>
+            <div class="love-color-intro"><p class="eyebrow">20 SCENARIOS · ONE COLOR</p><h2>관계에서 중요하게 생각하는 방식을 알려주세요.</h2><p>정답은 없습니다. 실제 나의 생각과 가장 가까운 답을 골라주세요.</p></div>
+            <div class="love-question-list" data-love-questions></div>
+            <input type="hidden" name="love_color" value="" data-love-color-value />
+          </fieldset>
+
           <section class="submit-section" id="submit" aria-labelledby="submit-title">
-            <span>04</span>
+            <span>05</span>
             <div>
               <h2 id="submit-title">SUBMIT</h2>
               <p>제출 후 운영자가 신청 내용을 검토합니다. 현재 프로토타입에서는 실제 정보가 전송되지 않습니다.</p>
@@ -171,8 +169,8 @@
 
     <footer class="site-footer application-footer">
       <div class="shell footer-inner">
-        <div class="brand brand-footer"><strong>잘되면 밥한끼</strong><span>PRIVATE MATCHING</span></div>
-        <small>© <span data-current-year></span> 잘되면 밥한끼</small>
+        <div class="brand brand-footer"><strong>무지개색의 남녀</strong><span>PRIVATE MATCHING</span></div>
+        <small>© <span data-current-year></span> 무지개색의 남녀</small>
       </div>
     </footer>
   </body>
