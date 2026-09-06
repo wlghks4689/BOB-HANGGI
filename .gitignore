@@ -32,6 +32,11 @@ yarn-error.*
 
 # local env files
 .env*.local
+.env
+.env.*
+!.env.example
+supabase/.temp/
+supabase/.branches/
 
 # local AI assistant settings
 .claude/

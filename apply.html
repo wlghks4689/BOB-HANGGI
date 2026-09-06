@@ -7,6 +7,7 @@
     <title>소개 신청 | 대.세.는 소개팅</title>
     <link rel="icon" href="data:," />
     <link rel="stylesheet" href="css/style.css" />
+    <script src="js/backend-config.js" defer></script>
     <script src="js/main.js" defer></script>
   </head>
   <body class="application-page">
@@ -21,7 +22,7 @@
     <main id="application-main" class="application-main">
       <header class="application-title application-shell"><span class="eyebrow">APPLICATION</span><h1>소개 신청</h1></header>
       <div class="application-layout">
-      <form class="membership-form" data-membership-form novalidate>
+      <form class="membership-form" data-membership-form method="post" action="/api/applications" enctype="multipart/form-data" novalidate>
         <fieldset class="form-section" id="basic-profile">
           <legend><span>01</span>기본 정보</legend>
           <div class="form-grid">
@@ -135,7 +136,10 @@
         <hr class="section-divider" aria-hidden="true" />
         <section class="form-section submit-section" aria-labelledby="submit-title">
           <h2 id="submit-title" class="section-title"><span>06</span>신청하기</h2>
-          <button class="button button-primary" type="submit">소개 신청하기</button>
+          <p data-backend-state role="status">접수 가능 여부를 확인하고 있습니다.</p>
+          <div data-turnstile></div>
+          <button class="button button-primary" type="submit" disabled>소개 신청하기</button>
+          <noscript>신청하려면 브라우저에서 JavaScript를 활성화해주세요.</noscript>
           <div class="form-status" role="status" tabindex="-1" data-form-status></div>
         </section>
       </form>

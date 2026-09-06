@@ -1,0 +1,10 @@
+project_id = "daese-matching"
+
+# Anonymous applications use server validation and Turnstile, not applicant JWTs.
+[functions.submit-application]
+verify_jwt = false
+entrypoint = "./functions/submit-application/index.mjs"
+
+[functions.admin-applications]
+verify_jwt = false
+entrypoint = "./functions/admin-applications/index.mjs"

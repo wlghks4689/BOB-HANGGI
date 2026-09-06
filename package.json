@@ -15,6 +15,7 @@
     "react-native-web": "^0.21.2"
   },
   "devDependencies": {
+    "@electric-sql/pglite": "0.5.8",
     "@types/react": "~19.2.2",
     "typescript": "~6.0.3"
   },
@@ -25,7 +26,9 @@
     "web": "expo start --web",
     "website": "node scripts/serve-website.mjs",
     "typecheck": "tsc --noEmit",
-    "test:questions": "node scripts/validate-questions.mjs"
+    "test:questions": "node scripts/validate-questions.mjs",
+    "test:db": "node --test tests/*.test.mjs",
+    "db:check": "node scripts/check-supabase.mjs"
   },
   "private": true
 }

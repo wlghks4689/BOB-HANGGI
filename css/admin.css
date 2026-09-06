@@ -1,0 +1,33 @@
+.admin-shell { width: min(1200px, calc(100% - 32px)); margin: 32px auto; }
+.admin-header, .admin-toolbar, .admin-actions, .admin-pagination { display: flex; flex-wrap: wrap; align-items: center; gap: 12px; }
+.admin-header { justify-content: space-between; margin-bottom: 20px; }
+.admin-header h1 { font-size: 28px; }
+.admin-header p, .admin-help { color: var(--secondary); }
+.admin-shell h2 { font-size: 21px; margin-bottom: 12px; }
+.admin-shell button, .admin-shell input, .admin-shell select, .admin-shell textarea { min-height: 44px; border: 1px solid var(--line); border-radius: 8px; padding: 10px 14px; background: white; }
+.admin-shell button { cursor: pointer; }
+.admin-shell button:disabled { opacity: .5; cursor: default; }
+.admin-shell input, .admin-shell textarea { width: 100%; min-width: 0; }
+.admin-shell label { display: block; margin-top: 10px; }
+.admin-shell .button-primary { background: var(--charcoal); color: white; }
+.admin-login { width: min(440px, 100%); margin: 48px auto; padding: 24px; background: var(--surface); border: 1px solid var(--line); border-radius: 16px; }
+.admin-login button { width: 100%; margin-top: 20px; }
+.admin-message { min-height: 28px; white-space: pre-wrap; overflow-wrap: anywhere; margin-bottom: 16px; }
+.admin-message.is-error, .admin-shell .danger { color: var(--error); }
+.admin-help { margin: 16px 0; font-size: 14px; }
+.admin-layout { display: grid; grid-template-columns: minmax(240px, 1fr) minmax(0, 1.5fr); gap: 24px; align-items: start; }
+.admin-list { display: grid; gap: 8px; }
+.admin-list button { text-align: left; width: 100%; overflow-wrap: anywhere; }
+.admin-list button[aria-current=true] { border-color: var(--charcoal); background: #eeeade; }
+.admin-list small { display: block; font-size: 14px; color: var(--secondary); }
+.admin-pagination { justify-content: space-between; margin-top: 16px; }
+.admin-detail { padding: 24px; background: var(--surface); border: 1px solid var(--line); border-radius: 12px; overflow-wrap: anywhere; }
+.admin-detail img { width: min(100%, 400px); aspect-ratio: 1780 / 1090; object-fit: cover; border-radius: 10px; }
+.admin-detail dl { display: grid; grid-template-columns: 120px minmax(0, 1fr); gap: 10px; margin: 20px 0; }
+.admin-detail dt { color: var(--secondary); }
+.admin-detail dd { margin: 0; white-space: pre-wrap; }
+.admin-actions { margin-top: 20px; }
+.admin-shell dialog { width: min(520px, calc(100% - 32px)); border: 1px solid var(--line); border-radius: 16px; padding: 24px; }
+.admin-shell dialog::backdrop { background: #0008; }
+.admin-shell dialog p { margin-bottom: 12px; overflow-wrap: anywhere; }
+@media (max-width: 760px) { .admin-layout { grid-template-columns: 1fr; } .admin-detail { padding: 16px; } .admin-detail dl { grid-template-columns: 100px minmax(0, 1fr); } }

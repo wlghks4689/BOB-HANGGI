@@ -73,6 +73,41 @@
 
   const form = document.querySelector("[data-membership-form]");
   if (!form) return;
+  let requestId = crypto.randomUUID();
+  let submitting = false;
+  let submitted = false;
+  let backendSettings = null;
+  let captchaWidget = null;
+  const submitButton = form.querySelector('[type="submit"]');
+  const backendState = form.querySelector('[data-backend-state]');
+  const endpoint = window.DaeseBackend?.endpoint || "/api/applications";
+  const CONSENT_VERSION = "2026-09-07-draft";
+  async function setupBackend() {
+    try {
+      const response = await fetch(endpoint, { cache: "no-store", signal: AbortSignal.timeout(10000) });
+      if (!response.ok) throw new Error();
+      backendSettings = await response.json();
+      if (!backendSettings.enabled || backendSettings.consentVersion !== CONSENT_VERSION) {
+        backendState.textContent = "현재 신청 접수를 준비 중입니다. 입력한 내용과 사진은 아직 전송·저장되지 않습니다.";
+        return;
+      }
+      if (backendSettings.turnstileSiteKey) {
+        await new Promise((resolve, reject) => {
+          const script = document.createElement("script");
+          script.src = "https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit";
+          script.onload = resolve; script.onerror = reject; document.head.append(script);
+        });
+        captchaWidget = window.turnstile.render(form.querySelector('[data-turnstile]'), {
+          sitekey: backendSettings.turnstileSiteKey, action: "apply", language: "ko",
+        });
+      }
+      backendState.textContent = backendSettings.testMode
+        ? "개발 테스트 접수입니다. 실제 개인정보 대신 가상 정보를 입력해주세요. 테스트 DB에 저장됩니다."
+        : "신청 완료 안내와 접수번호가 표시되면 정상 접수된 것입니다.";
+      submitButton.disabled = false;
+    } catch { backendState.textContent = "접수 서버에 연결할 수 없습니다. 새로고침 후 다시 확인해주세요."; }
+  }
+  void setupBackend();
 
   const currentYear = new Date().getFullYear();
   const birthYear = form.querySelector("[data-birth-year]");
@@ -285,6 +320,10 @@
       photoError("JPG, PNG 또는 WEBP 사진을 선택해주세요.");
       return;
     }
+    if (file.size > 15 * 1024 * 1024) {
+      photoError("원본 사진은 15MB 이하로 선택해주세요.");
+      return;
+    }
     void openCrop(file);
   });
   document.querySelector("[data-edit-photo]").addEventListener("click", () => {
@@ -338,10 +377,12 @@
       const appliedOriginal = draftFile;
       const blob = await new Promise((resolve) => canvas.toBlob(resolve, "image/jpeg", 0.92));
       if (!blob) throw new Error("Image encoding failed");
+      if (blob.size > 5 * 1024 * 1024) throw new Error("Photo too large");
       const result = new File([blob], `${appliedOriginal.name.replace(/\.[^.]+$/, "")}-profile.jpg`, { type: "image/jpeg" });
       if (previewUrl) URL.revokeObjectURL(previewUrl);
       originalFile = appliedOriginal;
       croppedFile = result;
+      requestId = crypto.randomUUID();
       savedCrop = appliedState;
       previewUrl = URL.createObjectURL(result);
       previewImage.src = previewUrl;
@@ -367,12 +408,11 @@
       ? `${excluded.join(" · ")} 정보는 선택 동의 전까지 제출 대상에서 제외됩니다.`
       : "";
   }
-  // Any future FormData submission must omit optional data without its separate consent.
+  // Always omit optional data without its separate consent.
   form.addEventListener("formdata", (event) => {
     if (croppedFile) event.formData.set("profile_photo", croppedFile);
     if (!form.elements.sensitive_religion_consent.checked) event.formData.delete("religion");
   });
-  // TODO: 실제 전송 연결 시 서버에서도 필수 동의와 선택정보 제외를 검증하고 동의 문서 버전·시각을 기록한다.
   // TODO: 실서비스 Match Proposal 단계에서 개인정보 제3자 제공 동의 UI 구현.
   updateConsentState();
 
@@ -402,6 +442,8 @@
   }
   function onEdit(event) {
     if (!event.target.matches("input, select, textarea")) return;
+    if (submitting || submitted) return;
+    requestId = crypto.randomUUID();
     clearError(event.target);
     if (event.target.type === "radio") {
       form.querySelectorAll('input[type="radio"]').forEach((option) => {
@@ -417,8 +459,9 @@
   form.addEventListener("input", onEdit);
   form.addEventListener("change", onEdit);
 
-  form.addEventListener("submit", (event) => {
+  form.addEventListener("submit", async (event) => {
     event.preventDefault();
+    if (submitting || submitted || !backendSettings?.enabled || submitButton.disabled) return;
     form.querySelectorAll('[aria-invalid="true"]').forEach(clearError);
     const phone = form.elements.phone;
     const digits = phone.value.replace(/[\s-]/g, "");
@@ -441,9 +484,53 @@
       return;
     }
 
-    // Prototype only: no request, localStorage, or personal-data logging.
-    status.className = "form-status is-success";
-    status.textContent = "입력 확인이 완료되었습니다. 현재는 프로토타입이며 신청 정보가 전송·저장되지 않았습니다.";
-    status.focus();
+    if (!croppedFile) { showError(photo, "사진을 선택한 뒤 구도를 적용해주세요."); return; }
+    if (captchaWidget !== null && !window.turnstile.getResponse(captchaWidget)) {
+      status.className = "form-status is-error";
+      status.textContent = "자동입력 방지 확인을 완료해주세요.";
+      return;
+    }
+    const data = new FormData(form);
+    data.set("request_id", requestId);
+    data.set("consent_version", CONSENT_VERSION);
+    if (captchaWidget !== null) data.set("cf-turnstile-response", window.turnstile.getResponse(captchaWidget));
+    submitting = true;
+    const controls = Array.from(form.querySelectorAll("input, select, textarea, button")).filter(control => !control.disabled);
+    controls.forEach(control => { control.disabled = true; });
+    form.setAttribute("aria-busy", "true");
+    submitButton.textContent = "신청 정보를 저장하고 있습니다…";
+    status.className = "form-status";
+    status.textContent = "잠시만 기다려주세요. 저장 결과를 확인하고 있습니다.";
+    let failedField = null;
+    try {
+      const response = await fetch(endpoint, { method: "POST", body: data, signal: AbortSignal.timeout(45000) });
+      const result = await response.json();
+      if (!response.ok || result.submitted !== true || result.id !== requestId) {
+        failedField = typeof result.field === "string" ? form.elements.namedItem(result.field) : null;
+        throw new Error(result.error || "저장 결과를 확인하지 못했습니다. 잠시 후 다시 시도해주세요.");
+      }
+      submitted = true;
+      status.className = "form-status is-success";
+      status.textContent = `신청이 접수되었습니다. 접수번호: ${result.id}. 사진과 신청 내용은 운영자 검토 후 안내드립니다.`;
+      submitButton.textContent = "신청 접수 완료";
+      originalFile = null; croppedFile = null; photo.value = "";
+    } catch (error) {
+      status.className = "form-status is-error";
+      status.textContent = error.name === "TimeoutError" || error instanceof TypeError
+        ? "연결이 끊겨 저장 결과를 확인하지 못했습니다. 입력을 유지한 채 다시 눌러주세요. 같은 요청은 중복 저장하지 않습니다."
+        : error.message;
+    } finally {
+      submitting = false;
+      form.removeAttribute("aria-busy");
+      if (!submitted) {
+        controls.forEach(control => { control.disabled = false; });
+        submitButton.textContent = "소개 신청하기";
+        if (captchaWidget !== null) window.turnstile.reset(captchaWidget);
+        if (failedField instanceof HTMLElement) {
+          failedField.setAttribute("aria-invalid", "true"); failedField.focus();
+        }
+      }
+      status.focus();
+    }
   });
 })();
