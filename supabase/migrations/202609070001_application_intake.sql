@@ -138,7 +138,7 @@ begin
   if j.state <> 'receiving' then raise exception 'Inactive intake lease'; end if;
   if (p_data->>'birth_year')::integer not between extract(year from now())::integer-40 and extract(year from now())::integer-20
     then raise exception 'Invalid birth year'; end if;
-  if p_data->>'consent_version' <> '2026-09-07-draft' then raise exception 'Invalid consent version'; end if;
+  if p_data->>'consent_version' <> '2026-09-07' then raise exception 'Invalid consent version'; end if;
   -- Metadata alone is not a photo. Complete only after Storage confirms the upload.
   if not exists(select 1 from storage.objects where bucket_id='application-photos' and name=j.photo_path)
     then raise exception 'Missing uploaded photo'; end if;

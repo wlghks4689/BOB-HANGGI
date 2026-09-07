@@ -20,5 +20,5 @@ test('HTTP serves website, blocks private source and rejects foreign Host', asyn
   assert.equal((await read('/admin.html')).status,200);
   for (const path of ['/.env.local','/.git/config','/supabase/functions/_shared/supabase.mjs','/package-lock.json','/%2eenv.local','/assets/%2e%2e/.env.local']) assert.equal((await read(path)).status,404,path);
   assert.equal((await read('/','attacker.invalid')).status,403);
-  const config=await read('/api/applications');assert.equal(config.status,200);assert.equal(JSON.parse(config.body).consentVersion,'2026-09-07-draft');
+  const config=await read('/api/applications');assert.equal(config.status,200);assert.equal(JSON.parse(config.body).consentVersion,'2026-09-07');
 });
