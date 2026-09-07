@@ -12,10 +12,14 @@
     $('[data-delete-dialog]').close(); $('#delete-confirm').value = "";
   }
   const recovery = new URLSearchParams(location.hash.slice(1));
-  const recoveryToken = recovery.get('type') === 'recovery' ? recovery.get('access_token') : '';
+  const recoveryType = recovery.get('type');
+  const recoveryToken = ['recovery','invite','signup','magiclink'].includes(recoveryType) ? recovery.get('access_token') : '';
   if (recoveryToken) {
     $('[data-login]').hidden = true;
     $('[data-password-reset]').hidden = false;
+    history.replaceState(null, '', location.pathname);
+  } else if (recovery.get('error_code') === 'otp_expired') {
+    notify('비밀번호 설정 링크가 만료되었습니다. 가장 최근에 받은 메일의 링크를 다시 열어주세요.', true);
     history.replaceState(null, '', location.pathname);
   }
   async function api(body) {
