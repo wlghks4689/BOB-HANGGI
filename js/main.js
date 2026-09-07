@@ -189,10 +189,8 @@
     profileCard = renderProfileCard(sampleProfile);
     cardMount.replaceChildren(profileCard);
     previewPanel.hidden = false;
-    const desktop = window.matchMedia("(min-width: 1024px)");
-    const setPreviewLayout = () => { previewDetails.open = desktop.matches; };
-    setPreviewLayout();
-    desktop.addEventListener("change", setPreviewLayout);
+    // Keep the preview folded initially on every viewport; the user opens it when needed.
+    previewDetails.open = false;
     previewDetails.addEventListener("toggle", () => {
       if (previewDetails.open) fitProfileFavorites(profileCard, currentProfile.favorites);
     });

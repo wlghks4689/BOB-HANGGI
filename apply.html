@@ -103,7 +103,6 @@
         <fieldset class="form-section" id="privacy">
           <legend><span>05</span>개인정보 동의</legend>
           <a class="privacy-link" href="privacy.html" target="_blank" rel="noopener">개인정보처리방침 보기 <span class="visually-hidden">(새 창)</span></a>
-          <p class="field-help">동의 문서 버전: 2026-09-07-v1. 확정된 보유정책이며, 자동 파기 구현 및 검증 후 실제 운영 접수를 개방합니다.</p>
           <!-- TODO: 실서비스 Match Proposal 단계에서 개인정보 제3자 제공 동의 UI 구현. -->
           <div class="consent-item">
             <label class="consent"><input id="privacy_required" name="privacy_required" type="checkbox" required /><span>[필수] 개인정보 수집 및 이용 동의</span></label>
@@ -131,11 +130,10 @@
           </div>
           <div class="consent-state" role="status" data-consent-state></div>
           <div class="profile-disclosure">
-            <h2>향후 별도 동의 후 공개될 수 있는 정보</h2>
-            <p class="field-help">현재 상대방에게 프로필을 자동 제공하지 않습니다. 향후 제공받는 사람·목적·항목·보유 및 이용기간·동의 거부권을 안내하고 별도의 제3자 제공 동의를 받습니다. 지금의 신청 동의는 향후 프로필 제공 동의가 아닙니다.</p>
+            <h2>매칭 제안 시 공개되는 정보 / 비공개 정보</h2>
             <dl>
-              <div><dt>향후 공개 가능</dt><dd>프로필 사진 · 나이 · 키 · MBTI · 직업군 · 지역 · 관심사</dd></div>
-              <div><dt>기본 비공개</dt><dd>실제 이름 · 전화번호 · 종교 · 흡연 / 음주 · 상세 선호조건 · 관리자 메모</dd></div>
+              <div><dt>공개 정보</dt><dd>프로필 사진 · 나이 · 키 · MBTI · 직업군 · 지역 · 관심사</dd></div>
+              <div><dt>비공개 정보</dt><dd>실제 이름 · 전화번호 · 종교 · 흡연 / 음주 · 상세 선호조건</dd></div>
             </dl>
           </div>
         </fieldset>

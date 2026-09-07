@@ -1,5 +1,7 @@
 # 개인정보처리방침 작업 보고 — 2026-09-07
 
+> 후속 작업에서 공개 문서를 8개 사용자 중심 항목으로 재구성했습니다. 현재 운영·기술 구조는 [`PRIVACY_OPERATIONS.md`](PRIVACY_OPERATIONS.md)를 기준으로 확인하세요. 아래 내용은 최초 구현 당시의 작업 기록입니다.
+
 대상: `wlghks4689/BOB-HANGGI`, `main`. 문서 버전 `2026-09-07-v1`.
 공개 페이지 소스: [privacy.html](../privacy.html). 로컬 확인: http://localhost:4174/privacy.html.
 새 페이지·코드·마이그레이션의 커밋/푸시/배포는 이번에 수행하지 않았다.

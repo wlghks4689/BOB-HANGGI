@@ -12,11 +12,13 @@
     <main class="landing-poster" aria-label="대.세.는 소개팅">
       <img src="assets/landing-original.png" width="941" height="1672" fetchpriority="high"
         alt="대.세.는 소개팅. 대전·세종 프라이빗 매칭. 만남으로 시작하는 소개. 당신의 만남이, 인생에서 가장 빛나는 시작이 되기를." />
-      <button class="introduce-trigger" type="button" aria-haspopup="dialog" aria-controls="introduce-dialog">Introduce</button>
+      <nav class="landing-nav" aria-label="소개 및 개인정보">
+        <button class="landing-nav-item introduce-trigger" type="button" aria-haspopup="dialog" aria-controls="introduce-dialog">Introduce</button>
+        <a class="landing-nav-item" href="privacy.html">Privacy</a>
+      </nav>
       <!-- The button artwork belongs to the original image. Only its hit area is added. -->
       <a class="poster-apply" href="apply.html" aria-label="소개 신청하기"></a>
     </main>
-    <footer class="landing-footer"><a class="privacy-link" href="privacy.html" target="_blank" rel="noopener">개인정보처리방침 <span class="visually-hidden">(새 창)</span></a></footer>
     <dialog class="introduce-dialog" id="introduce-dialog" aria-labelledby="introduce-title">
       <div class="introduce-dialog-inner">
         <header class="introduce-heading">
