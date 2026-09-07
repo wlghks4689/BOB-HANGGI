@@ -11,6 +11,13 @@
     $('[data-list]').replaceChildren(); $('[data-detail]').replaceChildren(); $('[data-login]').reset();
     $('[data-delete-dialog]').close(); $('#delete-confirm').value = "";
   }
+  const recovery = new URLSearchParams(location.hash.slice(1));
+  const recoveryToken = recovery.get('type') === 'recovery' ? recovery.get('access_token') : '';
+  if (recoveryToken) {
+    $('[data-login]').hidden = true;
+    $('[data-password-reset]').hidden = false;
+    history.replaceState(null, '', location.pathname);
+  }
   async function api(body) {
     const response = await fetch(endpoint, { method: "POST", headers: {
       "Content-Type": "application/json", ...(token ? { Authorization: `Bearer ${token}` } : {}),
@@ -109,6 +116,22 @@
       expiresTimer = setTimeout(() => { clearSession(); notify('로그인이 만료되었습니다. 다시 로그인해주세요.'); }, Math.max(1, session.expiresIn - 30) * 1000);
       form.hidden = true; $('[data-workspace]').hidden = false; $('[data-logout]').hidden = false;
       await loadList(); notify('관리자로 로그인했습니다.');
+    });
+  });
+  $('[data-password-reset]').addEventListener('submit', event => {
+    event.preventDefault();
+    const form = event.currentTarget;
+    run(async () => {
+      const password = form.elements.password.value;
+      if (password.length < 12) throw new Error('비밀번호는 12자 이상으로 입력해주세요.');
+      if (password !== form.elements.passwordConfirm.value) throw new Error('비밀번호 확인이 일치하지 않습니다.');
+      const response = await fetch(endpoint, { method:'POST', headers:{ 'Content-Type':'application/json', Authorization:`Bearer ${recoveryToken}` },
+        body:JSON.stringify({ action:'reset-password', password }), cache:'no-store', signal:AbortSignal.timeout(45000) });
+      const result = await response.json();
+      form.reset();
+      if (!response.ok) throw new Error(result.error || '비밀번호를 저장하지 못했습니다. 재설정 메일을 다시 요청해주세요.');
+      form.hidden = true; $('[data-login]').hidden = false;
+      notify('비밀번호를 저장했습니다. 새 비밀번호로 로그인해주세요.');
     });
   });
   $('[data-logout]').addEventListener('click', () => run(async () => { try { await api({ action:'logout' }); } finally { clearSession(); notify('로그아웃했습니다.'); } }));

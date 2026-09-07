@@ -54,6 +54,14 @@ export function createAdminHandler(env, { backendFactory = createBackend, fetche
       }
       const token = (request.headers.get("authorization") || "").replace(/^Bearer /, "");
       const user = await requireAdmin(backend, token);
+      if (body.action === "reset-password") {
+        if (typeof body.password !== "string" || body.password.length < 12 || body.password.length > 1024) {
+          throw new InputError("비밀번호는 12자 이상으로 입력해주세요.");
+        }
+        await backend.call("/auth/v1/user", { method: "PUT", headers: { Authorization: `Bearer ${token}` }, body: { password: body.password } });
+        await backend.call("/auth/v1/logout?scope=local", { method: "POST", headers: { Authorization: `Bearer ${token}` } });
+        return json({ ok: true }, 200, headers);
+      }
       if (body.action === "logout") {
         await backend.call("/auth/v1/logout?scope=local", { method: "POST", headers: { Authorization: `Bearer ${token}` } });
         return json({ ok: true }, 200, headers);

@@ -11,6 +11,7 @@ function mock({active=true, invalid=false}={}) {
     calls.push({path,options});
     if (path === '/auth/v1/token?grant_type=password') return {access_token:'verified-token',refresh_token:'never-return-this',expires_in:3600};
     if (path === '/auth/v1/user') {if(invalid) throw Object.assign(new Error('private-error'),{status:401});return {id:actorId};}
+    if (path.startsWith('/auth/v1/logout')) return null;
     if (path.startsWith('/rest/v1/daese_admins')) return active?[{user_id:actorId}]:[];
     if (path.startsWith('/rest/v1/daese_applications')) return [];
     if (path.startsWith('/rest/v1/daese_photo_cleanup')) return [];
@@ -32,6 +33,16 @@ test('login verifies admin membership and never returns refresh token', async ()
   const data=await response.json();assert.equal(response.status,200);assert.equal(data.accessToken,'verified-token');assert.equal(data.refreshToken,undefined);
   assert.ok(!JSON.stringify(data).includes('never-return-this'));
   const denied=await createAdminHandler(env,{backendFactory:()=>mock({active:false})})(req({action:'login',email:'test@example.invalid',password:'fake'},''));assert.equal(denied.status,403);
+});
+test('password recovery token can set a strong password only for an allowlisted admin', async () => {
+  const backend=mock(), handle=createAdminHandler(env,{backendFactory:()=>backend});
+  assert.equal((await handle(req({action:'reset-password',password:'short'}))).status,400);
+  const response=await handle(req({action:'reset-password',password:'long-fake-password'}));
+  assert.equal(response.status,200);
+  const update=backend.calls.find(call=>call.path==='/auth/v1/user' && call.options?.method==='PUT');
+  assert.equal(update.options.body.password,'long-fake-password');
+  const denied=await createAdminHandler(env,{backendFactory:()=>mock({active:false})})(req({action:'reset-password',password:'long-fake-password'}));
+  assert.equal(denied.status,403);
 });
 test('list filters and pagination validate input before querying applications', async () => {
   const handle=createAdminHandler(env,{backendFactory:()=>mock()});
