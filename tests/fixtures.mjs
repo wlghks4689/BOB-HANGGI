@@ -1,5 +1,5 @@
 import { PGlite } from '@electric-sql/pglite';
-import { readFile } from 'node:fs/promises';
+import { readFile, readdir } from 'node:fs/promises';
 import { CONSENT_VERSION } from '../supabase/functions/_shared/validation.mjs';
 
 export const id = '10000000-0000-4000-8000-000000000001';
@@ -41,7 +41,10 @@ export async function database() {
     grant usage on schema public,storage,auth to service_role,anon,authenticated;
     grant all on storage.objects to service_role;
   `);
-  await db.exec(await readFile(new URL('../supabase/migrations/202609070001_application_intake.sql', import.meta.url), 'utf8'));
+  const migrations = new URL('../supabase/migrations/', import.meta.url);
+  for (const file of (await readdir(migrations)).filter(name => name.endsWith('.sql')).sort()) {
+    await db.exec(await readFile(new URL(file, migrations), 'utf8'));
+  }
   await db.query('insert into auth.users values ($1)', [actorId]);
   await db.query('insert into public.daese_admins(user_id) values ($1)', [actorId]);
   return db;

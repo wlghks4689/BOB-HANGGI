@@ -62,10 +62,13 @@ h1, h2, p { margin: 0; }
 .button-primary { background: var(--charcoal); color: white; }
 .button-primary:hover { background: #41403c; }
 
-/* The supplied poster is the entire landing page, without cropping or extra copy. */
+/* Preserve the supplied poster and reserve a separate row for the policy link. */
 .landing-page { background: #edece2; }
-.landing-page body { min-height: 100svh; display: grid; place-items: center; background: #edece2; }
-.landing-poster { position: relative; width: min(100%, calc(100svh * 941 / 1672)); margin: 0; }
+.landing-page body { min-height: 100svh; display: grid; grid-template-rows: 1fr auto; place-items: center; background: #edece2; }
+.landing-poster { position: relative; width: min(100%, calc((100svh - 52px) * 941 / 1672)); margin: 0; }
+.landing-footer { min-height: 52px; display: flex; align-items: center; justify-content: center; }
+.privacy-link { display: inline-flex; align-items: center; min-height: 44px; padding: 8px 0; color: #505c39; font-family: var(--sans); font-size: 0.875rem; text-decoration: underline; text-underline-offset: 4px; }
+.application-footer .privacy-link { display: flex; width: fit-content; margin-top: 8px; }
 .landing-poster > img { width: 100%; height: auto; }
 .poster-apply { position: absolute; left: 15.3%; top: 89.2%; width: 69.4%; height: 7.3%; border-radius: 999px; }
 .poster-apply:focus-visible { outline: 3px solid #424d2c; outline-offset: 4px; background: rgb(255 255 255 / 10%); }
@@ -191,7 +194,7 @@ body:has(.introduce-dialog[open]) { overflow: hidden; }
 .interest-fields { min-width: 0; }
 .interest-fields .field + .field { margin-top: 16px; }
 .age-range { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
-.application-page .visually-hidden {
+.landing-page .visually-hidden, .application-page .visually-hidden {
   position: absolute; width: 1px; height: 1px; min-height: 0; margin: -1px; padding: 0;
   clip: rect(0, 0, 0, 0); clip-path: inset(50%); overflow: hidden; white-space: nowrap; border: 0;
 }
@@ -211,9 +214,9 @@ body:has(.introduce-dialog[open]) { overflow: hidden; }
 
 .profile-disclosure { margin-top: 20px; padding: 16px; border-radius: 8px; background: var(--surface-soft); }
 .profile-disclosure h2 { margin-bottom: 10px; font-size: 0.8rem; font-weight: 600; }
-.profile-disclosure dl { display: grid; gap: 8px; margin: 0; }
-.profile-disclosure dl > div { display: grid; grid-template-columns: 40px 1fr; gap: 8px; font-size: 0.75rem; }
-.profile-disclosure dt { font-weight: 600; }
+.profile-disclosure dl { display: grid; gap: 8px; margin: 12px 0 0; }
+.profile-disclosure dl > div { display: grid; grid-template-columns: 72px minmax(0, 1fr); gap: 8px; font-size: 0.75rem; }
+.profile-disclosure dt { font-weight: 600; word-break: keep-all; }
 .profile-disclosure dd { margin: 0; color: var(--secondary); word-break: keep-all; }
 .consent-item { padding: 8px 0; border-bottom: 1px solid var(--line); }
 .consent { display: flex; min-height: 48px; align-items: center; gap: 10px; font-size: 0.875rem; cursor: pointer; }
@@ -227,6 +230,7 @@ body:has(.introduce-dialog[open]) { overflow: hidden; }
 .consent-details dt { margin-top: 12px; font-weight: 600; }
 .consent-details dt:first-child { margin-top: 0; }
 .consent-details dd { margin: 4px 0 0; color: var(--secondary); word-break: keep-all; }
+.consent-details a { text-decoration: underline; text-underline-offset: 3px; overflow-wrap: anywhere; }
 .consent-state { margin-top: 12px; color: var(--secondary); font-size: 0.75rem; }
 .consent-state:empty { display: none; }
 .application-page .submit-section .button {

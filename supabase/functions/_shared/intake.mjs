@@ -1,6 +1,10 @@
 import { CONSENT_VERSION, InputError, limitedFormData, validateForm, validatePhoto } from "./validation.mjs";
 import { createBackend, rateKey, sha256 } from "./supabase.mjs";
 
+// Release blocker: implement and verify the 48-hour / 30-day retention jobs first.
+// An environment toggle alone must not reopen real-data intake.
+const RETENTION_AUTOMATION_VERIFIED = false;
+
 export function cors(request, env) {
   const origin = request.headers.get("origin");
   const allowed = (env.ALLOWED_ORIGINS || "").split(",").map(s => s.trim()).filter(Boolean);
@@ -28,7 +32,8 @@ function config(env, local) {
   // A draft notice cannot silently become the production consent document.
   const policyReady = env.CONSENT_VERSION === CONSENT_VERSION && (testing || !CONSENT_VERSION.endsWith("-draft"));
   const captchaReady = testing || Boolean(env.TURNSTILE_SITE_KEY && env.TURNSTILE_SECRET_KEY);
-  return { enabled: Boolean(configured && policyReady && captchaReady && env.APPLICATIONS_ENABLED === "true"), testing };
+  const retentionReady = testing || RETENTION_AUTOMATION_VERIFIED;
+  return { enabled: Boolean(configured && policyReady && captchaReady && retentionReady && env.APPLICATIONS_ENABLED === "true"), testing };
 }
 
 async function verifyCaptcha(token, origin, env, fetcher) {

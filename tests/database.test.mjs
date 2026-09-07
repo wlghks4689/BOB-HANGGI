@@ -2,7 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import { database, sqlBackend, env, id, actorId, validForm, request } from './fixtures.mjs';
 import { createIntakeHandler } from '../supabase/functions/_shared/intake.mjs';
-import { validateForm } from '../supabase/functions/_shared/validation.mjs';
+import { CONSENT_VERSION, validateForm } from '../supabase/functions/_shared/validation.mjs';
 
 test('PostgreSQL migration, access control, intake, recovery and administrator mutations', async t => {
   const db=await database(); t.after(()=>db.close());
@@ -31,6 +31,7 @@ test('PostgreSQL migration, access control, intake, recovery and administrator m
     assert.equal((await db.query('select count(*)::integer as n from public.daese_sensitive_details')).rows[0].n,0);
     const a=(await db.query('select status,photo_review from public.daese_applications')).rows[0]; assert.equal(a.status,'submitted'); assert.equal(a.photo_review,'pending');
     assert.equal((await db.query('select phone_verified from public.daese_contacts')).rows[0].phone_verified,false);
+    assert.equal((await db.query('select document_version from public.daese_consents')).rows[0].document_version,CONSENT_VERSION);
   });
   await t.test('same request ID with different data cannot overwrite an application', async () => {
     const form=validForm(); form.set('name','변경 시도'); assert.equal((await handle(request(form),'local-test')).status,409);
@@ -42,6 +43,9 @@ test('PostgreSQL migration, access control, intake, recovery and administrator m
     assert.equal((await backend.rpc('daese_claim_intake',{p_id:second,p_fingerprint:hash,p_rate_key:rate})).state,'busy');
     await backend.upload(claim.photo_path);
     const payload=validateForm(validForm(second)).payload; payload.phone='invalid';
+    for (const version of ['2026-09-07',null]) {
+      await assert.rejects(()=>backend.rpc('daese_finish_intake',{p_id:second,p_lease_id:claim.lease_id,p_data:{...payload,consent_version:version}}), /Invalid consent version/);
+    }
     await assert.rejects(()=>backend.rpc('daese_finish_intake',{p_id:second,p_lease_id:claim.lease_id,p_data:payload}));
     assert.equal((await db.query('select count(*)::integer n from public.daese_applications where id=$1',[second])).rows[0].n,0);
     await db.query("update public.daese_intake_jobs set updated_at=now()-interval '3 minutes' where id=$1",[second]);

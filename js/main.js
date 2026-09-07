@@ -81,7 +81,7 @@
   const submitButton = form.querySelector('[type="submit"]');
   const backendState = form.querySelector('[data-backend-state]');
   const endpoint = window.DaeseBackend?.endpoint || "/api/applications";
-  const CONSENT_VERSION = "2026-09-07";
+  const CONSENT_VERSION = "2026-09-07-v1";
   async function setupBackend() {
     try {
       const response = await fetch(endpoint, { cache: "no-store", signal: AbortSignal.timeout(10000) });

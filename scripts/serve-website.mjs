@@ -19,7 +19,7 @@ const contentTypes = {
   '.jpg': 'image/jpeg', '.jpeg': 'image/jpeg', '.png': 'image/png', '.svg': 'image/svg+xml',
   '.webp': 'image/webp', '.ttf': 'font/ttf', '.woff': 'font/woff', '.woff2': 'font/woff2', '.ico': 'image/x-icon',
 };
-const pages = new Set(['index.html', 'apply.html', 'admin.html', 'feedback.html']);
+const pages = new Set(['index.html', 'apply.html', 'admin.html', 'feedback.html', 'privacy.html']);
 export function isPublicPath(pathname) {
   if (pathname.includes('\\') || pathname.split('/').some(part => part.startsWith('.') || part.includes(':'))) return false;
   const path = pathname.replace(/^\//, '');

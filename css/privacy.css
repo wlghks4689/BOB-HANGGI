@@ -1,0 +1,28 @@
+.privacy-page { background: #f7f5ee; color: #30342b; }
+.privacy-shell { width: min(100% - 40px, 760px); margin-inline: auto; }
+.privacy-header, .privacy-footer { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px; padding-block: 22px; font-size: 0.875rem; }
+.privacy-page a:not(.skip-link) { color: #505c39; text-decoration: underline; text-underline-offset: 4px; overflow-wrap: anywhere; }
+.privacy-header a, .privacy-footer a { display: inline-flex; align-items: center; min-height: 44px; }
+.privacy-document { padding-block: 38px 20px; line-height: 1.85; overflow-wrap: anywhere; word-break: keep-all; }
+.privacy-title h1 { font-size: clamp(1.75rem, 5vw, 2.5rem); line-height: 1.35; letter-spacing: -0.04em; margin-block: 12px 24px; }
+.privacy-document p + p { margin-top: 14px; }
+.privacy-notice { margin-top: 28px !important; padding: 18px 20px; border-left: 3px solid #707b52; background: #eeeee2; }
+.privacy-notice strong { display: block; margin-bottom: 6px; }
+.privacy-contents { padding-block: 32px; margin-top: 16px; border-bottom: 1px solid #d7dacb; }
+.privacy-contents ol { margin: 16px 0 0; padding-left: 24px; columns: 2; column-gap: 30px; }
+.privacy-contents li { break-inside: avoid; padding-block: 5px; }
+.privacy-contents a { display: inline-block; padding-block: 4px; }
+.privacy-document section { padding-block: 32px; border-bottom: 1px solid #d7dacb; scroll-margin-top: 20px; }
+.privacy-document h2 { font-size: 1.2rem; line-height: 1.5; letter-spacing: -0.025em; margin-bottom: 16px; }
+.privacy-document ul { padding-left: 22px; margin-block: 16px; }
+.privacy-document li + li { margin-top: 6px; }
+.privacy-document dl { margin-block: 18px; }
+.privacy-document dt { font-weight: 700; color: #495735; margin-top: 20px; }
+.privacy-document dd { margin: 5px 0 0; }
+.privacy-footer { color: #656a5a; padding-bottom: max(28px, env(safe-area-inset-bottom)); }
+@media (max-width: 540px) {
+  .privacy-document { padding-top: 20px; }
+  .privacy-contents ol { columns: 1; }
+  .privacy-contents a { min-height: 44px; }
+  .privacy-document section { padding-block: 28px; }
+}

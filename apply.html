@@ -102,35 +102,40 @@
         <hr class="section-divider" aria-hidden="true" />
         <fieldset class="form-section" id="privacy">
           <legend><span>05</span>개인정보 동의</legend>
+          <a class="privacy-link" href="privacy.html" target="_blank" rel="noopener">개인정보처리방침 보기 <span class="visually-hidden">(새 창)</span></a>
+          <p class="field-help">동의 문서 버전: 2026-09-07-v1. 확정된 보유정책이며, 자동 파기 구현 및 검증 후 실제 운영 접수를 개방합니다.</p>
           <!-- TODO: 실서비스 Match Proposal 단계에서 개인정보 제3자 제공 동의 UI 구현. -->
           <div class="consent-item">
             <label class="consent"><input id="privacy_required" name="privacy_required" type="checkbox" required /><span>[필수] 개인정보 수집 및 이용 동의</span></label>
             <details class="consent-details">
               <summary>수집 항목 및 이용 안내</summary>
               <dl>
-                <dt>목적</dt><dd>소개 신청 심사, 매칭 후보 선별, 미팅 일정 안내, 서비스 관련 연락, 문의 및 분쟁 대응</dd>
-                <dt>수집 항목</dt><dd>이름, 출생연도, 성별, 거주 지역, 직업군(기타 선택 시 직접 입력한 내용 포함), 키, MBTI, 프로필 사진, 흡연 여부, 음주 빈도, 반려동물 여부, 관심사 및 취미, 상대 선호 조건, 전화번호</dd>
-                <dt>처리 근거</dt><dd>「개인정보 보호법」 제15조 제1항 제1호(정보주체의 동의)</dd>
-                <dt>운영 주체·문의</dt><dd>김지환 · wlghks4689@gmail.com</dd>
-                <dt>보유 및 이용기간</dt><dd>미승인 신청자: 심사 결과 안내 후 48시간 이내 파기.<br />승인 회원: 서비스 이용 종료 또는 개인정보 삭제 요청 후 48시간 이내 파기.<br />관계 법령에 따라 보존해야 하는 정보는 해당 법령에서 정한 기간 동안 다른 개인정보와 분리하여 보관한 뒤 파기합니다(「개인정보 보호법」 제21조).</dd>
+                <dt>목적</dt><dd>소개 신청 접수 및 신청자 확인, 신청서·프로필 사진 심사, 승인 회원 Pool 관리, 매칭 후보 선정, 소개 제안 및 실제 만남 일정 안내, 서비스 관련 연락, 개인정보 관련 요청 처리, 문의 및 분쟁 대응</dd>
+                <dt>수집 항목</dt><dd>이름 또는 닉네임, 출생연도, 성별, 거주 지역 및 상세 지역, 직업군(기타 선택 시 직접 입력한 내용 포함), 키, MBTI, 프로필 사진, 흡연 여부, 음주 빈도, 반려동물 여부, 관심사·취미(1~3개), 선호 나이 관계, 희망 최소·최대 나이, 가장 우선하는 조건, 있으면 좋은 조건(선택), 전화번호. 처리 과정에서 신청 식별번호·접수/수정 시각·심사 상태·사진 경로, 동의 여부/버전/시각, 관리자 메모·검토 이력, 중복 제출 처리용 식별번호/내용 지문/업로드 작업 상태, 사진 삭제 대기 기록 및 HMAC 처리한 접속 주소별 요청 수·시간 구간이 생성됩니다.</dd>
+                <dt>처리 근거</dt><dd>이용자의 개인정보 수집·이용 동의</dd>
+                <dt>운영 주체·문의</dt><dd>김지환 · <a href="mailto:wlghks1778@gmail.com">wlghks1778@gmail.com</a></dd>
+                <dt>신청 심사</dt><dd>신청 접수 후 최대 48시간 이내 심사를 완료하는 것을 운영 기준으로 합니다.</dd>
+                <dt>장기 미처리 신청</dt><dd>심사가 완료되지 않은 신청 정보와 프로필 사진도 접수일로부터 30일을 초과하여 보관하지 않습니다.</dd>
+                <dt>보유 및 이용기간</dt><dd>미승인 신청자: 심사 결과 안내 후 48시간 이내 개인정보와 프로필 사진을 파기합니다.<br />승인 회원: 서비스 이용 종료 또는 개인정보 삭제 요청 후 48시간 이내 개인정보와 프로필 사진을 파기합니다.<br />관계 법령에서 별도의 보존 의무가 발생하는 경우 해당 법령에서 정한 기간 동안 보관할 수 있습니다.</dd>
                 <dt>동의 거부</dt><dd>동의를 거부할 권리가 있습니다. 다만 필수정보 수집에 동의하지 않을 경우 소개 신청 및 매칭 서비스 제공이 어렵습니다.</dd>
               </dl>
             </details>
           </div>
-          <!-- TODO: 실서비스 개인정보 정책 확정 후 religion 관련 민감정보 별도 동의 처리를 검토한다. 그 전까지 현재 분리 동의 및 미동의 정보 제외를 유지한다. -->
+          <!-- Separate religion consent remains optional; unconsented values are discarded. -->
           <div class="consent-item">
             <label class="consent"><input id="sensitive_religion_consent" name="sensitive_religion_consent" type="checkbox" /><span>[선택] 민감정보 수집 및 이용 동의</span></label>
             <details class="consent-details">
               <summary>종교 정보 이용 안내</summary>
-              <dl><dt>목적</dt><dd>회원의 상대 선호 및 매칭 참고</dd><dt>항목</dt><dd>종교</dd><dt>처리 근거</dt><dd>「개인정보 보호법」 제23조 제1항 제1호에 따른 별도 동의</dd><dt>보유기간</dt><dd>서비스 이용 종료 또는 개인정보 삭제 요청 후 48시간 이내 파기</dd><dt>동의 거부</dt><dd>동의를 거부할 수 있으며, 동의하지 않아도 서비스 신청은 가능합니다.</dd></dl>
+              <dl><dt>목적</dt><dd>회원의 상대 선호 및 매칭 참고</dd><dt>항목</dt><dd>종교</dd><dt>처리 근거</dt><dd>선택 민감정보 수집·이용에 대한 별도 동의</dd><dt>보유기간</dt><dd>미처리 신청: 접수일로부터 30일을 초과하여 보관하지 않습니다. 미승인 신청자: 심사 결과 안내 후 48시간 이내 파기. 승인 회원: 서비스 이용 종료 또는 개인정보 삭제 요청 후 48시간 이내 파기. 관계 법령에 별도 보존 의무가 있는 경우 해당 법령에서 정한 기간 동안 보관할 수 있습니다.</dd><dt>동의 거부</dt><dd>동의를 거부할 수 있으며, 동의하지 않아도 서비스 신청은 가능합니다. 미동의 종교 값은 서버·DB에 저장하지 않습니다.</dd></dl>
             </details>
           </div>
           <div class="consent-state" role="status" data-consent-state></div>
           <div class="profile-disclosure">
-            <h2>매칭 제안 시 상대방에게 공개되는 정보</h2>
+            <h2>향후 별도 동의 후 공개될 수 있는 정보</h2>
+            <p class="field-help">현재 상대방에게 프로필을 자동 제공하지 않습니다. 향후 제공받는 사람·목적·항목·보유 및 이용기간·동의 거부권을 안내하고 별도의 제3자 제공 동의를 받습니다. 지금의 신청 동의는 향후 프로필 제공 동의가 아닙니다.</p>
             <dl>
-              <div><dt>공개</dt><dd>프로필 사진 · 나이 · 키 · MBTI · 직업군 · 지역</dd></div>
-              <div><dt>비공개</dt><dd>이름 · 전화번호 · 종교 · 흡연 / 음주 · 상세 선호조건</dd></div>
+              <div><dt>향후 공개 가능</dt><dd>프로필 사진 · 나이 · 키 · MBTI · 직업군 · 지역 · 관심사</dd></div>
+              <div><dt>기본 비공개</dt><dd>실제 이름 · 전화번호 · 종교 · 흡연 / 음주 · 상세 선호조건 · 관리자 메모</dd></div>
             </dl>
           </div>
         </fieldset>
@@ -155,7 +160,7 @@
         </details>
       </aside>
       </div>
-      <footer class="application-footer application-shell">대.세.는 소개팅 <span>/ Daejeon · Sejong</span></footer>
+      <footer class="application-footer application-shell">대.세.는 소개팅 <span>/ Daejeon · Sejong</span><a class="privacy-link" href="privacy.html" target="_blank" rel="noopener">개인정보처리방침 <span class="visually-hidden">(새 창)</span></a></footer>
     </main>
     <dialog class="crop-dialog" data-crop-dialog aria-labelledby="crop-title" aria-describedby="crop-help">
       <div class="crop-heading"><h2 id="crop-title">사진 구도 조정</h2><button type="button" class="crop-close" data-crop-cancel aria-label="구도 조정 취소">×</button></div>
