@@ -345,6 +345,74 @@ body:has(.introduce-dialog[open]) { overflow: hidden; }
   opacity: 1; -webkit-text-fill-color: currentColor;
 }
 .card-decisions button + button { border-left: 1.5px solid var(--card-action-rule); color: #474d3d; }
+/* Portrait presentation; upload/crop dimensions are intentionally unchanged. */
+@font-face {
+  font-family: "HCR Batang Local";
+  src: local("함초롬바탕"), local("HCR Batang"), local("함초롱바탕");
+  font-display: swap;
+}
+.profile-card {
+  --card-rule:#777b60; --card-action-rule:#787c62;
+  width:min(92vw,420px); max-width:100%; padding:0 18px 20px;
+  background:#272822; color:#f3f0e5; border:1px solid var(--card-rule); border-radius:24px;
+  overflow:hidden; box-shadow:0 10px 28px #27282220;
+}
+.profile-card-art {
+  position:absolute; top:0; left:0; width:100%; height:auto;
+  clip-path:inset(0 0 81% 0); filter:grayscale(1) invert(1) contrast(1.5); opacity:.9; pointer-events:none;
+}
+.profile-card-overlay {
+  position:relative; inset:auto; display:grid; grid-template-columns:1fr 1fr;
+  grid-template-rows:auto auto repeat(3,84px);
+}
+.profile-card::before { content:""; position:absolute; inset:7px; border:1px solid var(--card-rule); border-radius:18px; pointer-events:none; opacity:.65; }
+.card-heading { grid-area:1 / 1 / 2 / 3; padding:18px 0 16px; color:#e9e5d3; }
+.card-ornament { display:flex; align-items:center; gap:10px; color:#a8ad8a; font-size:12px; margin-bottom:12px; }
+.card-ornament i { height:1px; flex:1; background:var(--card-rule); }
+.card-heading-line { display:flex; align-items:center; justify-content:space-between; gap:10px; }
+.card-title { font-family:Georgia,"Profile Myeongjo",serif; font-size:8.3cqw; font-weight:400; letter-spacing:-.035em; line-height:1.15; white-space:nowrap; }
+.card-brand { flex:none; width:19cqw; height:14cqw; display:flex; flex-direction:column; align-items:center; justify-content:center; border:1px solid var(--card-rule); outline:1px solid var(--card-rule); outline-offset:3px; border-radius:50%; color:#d7dcc0; }
+.card-brand small { font-size:2.7cqw; line-height:1.5; }
+.card-brand strong { font-size:4.3cqw; line-height:1.2; font-weight:400; }
+.profile-card-overlay::before,.profile-card-overlay::after { display:none; }
+.member-photo,.profile-card:not([data-personalized]) .member-photo {
+  position:relative; display:grid; grid-column:1 / -1; grid-row:2;
+  left:auto; top:auto; width:100%; height:auto; aspect-ratio:1/1;
+  border:1px solid var(--card-rule); border-radius:14px 14px 0 0; background:#272822;
+}
+.profile-card:not([data-personalized]) .member-photo {
+  background-image:url("../assets/profile-card-original.png");
+  background-size:122% 265.7%; background-position:50% 32.23%;
+}
+.profile-card:not([data-personalized]) [data-profile-photo-placeholder] { visibility:hidden; }
+.member-photo img { position:absolute; inset:0; object-fit:cover; object-position:center top; }
+.member-photo > span { color:#d7dac6; }
+.card-label,.card-value {
+  position:relative; left:auto !important; top:auto !important; width:auto; height:auto;
+  background:transparent; padding-left:12px; padding-right:8px;
+}
+.card-label { align-self:stretch; padding-top:19px; color:#c4c7af; font-size:12px; border:1px solid var(--card-rule); border-top:0; }
+.card-label[data-label="name"],.card-label[data-label="favorites"],.card-label[data-label="mbti"] { border-right:0; }
+.card-label[data-label="mbti"] { border-radius:0 0 0 12px; }
+.card-label[data-label="height"] { border-radius:0 0 12px 0; }
+.card-value { align-self:end; padding-bottom:15px; color:#f7f4e9; font-size:18px; border-bottom:0; }
+.card-label[data-label="name"],.card-value[data-profile="name"] { grid-area:3 / 1; }
+.card-label[data-label="birthYear"],.card-value[data-profile="birthYear"] { grid-area:3 / 2; }
+.card-label[data-label="favorites"],.card-value[data-profile="favorites"] { grid-area:4 / 1; }
+.card-label[data-label="location"],.card-value[data-profile="location"] { grid-area:4 / 2; }
+.card-label[data-label="mbti"],.card-value[data-profile="mbti"] { grid-area:5 / 1; }
+.card-label[data-label="height"],.card-value[data-profile="height"] { grid-area:5 / 2; }
+.card-decisions {
+  position:relative; grid-area:6 / 1 / 7 / 3; left:auto; top:auto; width:100%; height:48px;
+  border-top:0; box-shadow:none; border-radius:0 0 12px 12px; background:#373b2f;
+}
+.card-decisions button,.card-decisions button + button {
+  color:#f4f1e6; font-family:"HCR Batang Local","Profile Myeongjo",serif;
+  font-size:17px; font-weight:400;
+}
+@media(max-width:760px) {
+  .profile-preview-content { width:92vw; margin-inline:calc((100% - 92vw) / 2); }
+}
 @container (max-width: 300px) {
   .card-decisions button { font-size: 14px; }
 }
@@ -396,3 +464,7 @@ body:has(.crop-dialog[open]) { overflow: hidden; }
 @media (prefers-reduced-motion: reduce) {
   html { scroll-behavior: auto; }
 }
+/* Keep the original artwork proportions when isolating its title and sample photo. */
+.profile-card-art { mix-blend-mode:screen; }
+.profile-card:not([data-personalized]) .member-photo { background-size:auto 265.7%; }
+.pool-member-photo[role="img"],.pool-profile-mock-photo { background-size:426.667% 200%; }

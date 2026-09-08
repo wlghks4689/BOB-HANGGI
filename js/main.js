@@ -32,18 +32,18 @@
     image.hidden = !profile.photoUrl;
     card.querySelector("[data-profile-photo-placeholder]").hidden = Boolean(profile.photoUrl);
     fitProfileFavorites(card, profile.favorites || []);
-    card.querySelector(".profile-card-art").alt = profile.isSample
-      ? "프로필 카드 예시 사진과 장식"
-      : "";
   }
 
-  // Keep the original artwork byte-for-byte; overlay only personalized content.
+  // Render the frame and typography natively; original artwork supplies only the sample photo.
   function renderProfileCard(profile = {}) {
     const template = document.createElement("template");
     template.innerHTML = `
       <article class="profile-card" aria-label="본인 확인용 프로필 카드">
-        <img class="profile-card-art" src="assets/profile-card-original.png" width="1086" height="1448" alt="" />
         <div class="profile-card-overlay">
+          <header class="card-heading">
+            <div class="card-ornament" aria-hidden="true"><span>✦</span><i></i><span>◇</span><i></i><span>✦</span></div>
+            <div class="card-heading-line"><span class="card-title">PROFILE CARD</span><span class="card-brand" aria-label="대.세.는 소개팅"><small>대.세.는</small><strong>소개팅</strong></span></div>
+          </header>
           <div class="member-photo"><img data-profile="photo" alt="내 프로필 사진" hidden /><span data-profile-photo-placeholder>사진을 등록해주세요</span></div>
           <span class="card-label" data-label="name">NAME</span>
           <span class="card-label" data-label="birthYear">YEAR OF BIRTH</span>
@@ -57,10 +57,6 @@
           <span class="card-value" data-profile="location" aria-label="지역"></span>
           <span class="card-value" data-profile="mbti" aria-label="MBTI"></span>
           <span class="card-value" data-profile="height" aria-label="키"></span>
-          <div class="card-decisions" role="group" aria-label="매칭 선택 버튼 미리보기">
-            <button type="button" disabled title="본인 프로필 미리보기에서는 선택할 수 없습니다">만나볼게요</button>
-            <button type="button" disabled title="본인 프로필 미리보기에서는 선택할 수 없습니다">패스할게요</button>
-          </div>
         </div>
       </article>`;
     const card = template.content.firstElementChild;
