@@ -80,10 +80,20 @@ export function createAdminHandler(env, { backendFactory = createBackend, fetche
       }
       if (body.action === "cleanup") return json(await cleanupPhotos(backend), 200, headers);
       if (!UUID.test(body.id || "")) throw new InputError("신청 번호를 확인해주세요.");
+      if (body.action === "pool-photo") {
+        const rows = await backend.call(`/rest/v1/daese_applications?id=eq.${body.id}&status=eq.approved&select=photo_path`);
+        if (!rows.length) throw new InputError("승인 회원을 찾을 수 없습니다.", "", 404);
+        const signed = await backend.call(`/storage/v1/object/sign/application-photos/${rows[0].photo_path}`, { method: "POST", body: { expiresIn: 300 } }).catch(() => null);
+        const signedPath = signed?.signedURL;
+        const photoUrl = typeof signedPath === "string" && signedPath.startsWith("/object/sign/application-photos/")
+          ? `${env.SUPABASE_URL.replace(/\/$/, "")}/storage/v1${signedPath}` : null;
+        return json({ photoUrl }, 200, headers);
+      }
       if (body.action === "pool-detail") {
         const rows = await backend.call(`/rest/v1/daese_applications?id=eq.${body.id}&status=eq.approved&select=id,name,birth_year,gender,region_city,region_detail,job_category,job_other,height,mbti,smoking,drinking,pet,preferred_age_relation,interests,priority_condition,preferred_condition,preferred_age_min,preferred_age_max,photo_path`);
         if (!rows.length) throw new InputError("승인 회원을 찾을 수 없습니다.", "", 404);
-        const [sensitive, signed] = await Promise.all([
+        const [contact, sensitive, signed] = await Promise.all([
+          backend.call(`/rest/v1/daese_contacts?application_id=eq.${body.id}&select=phone,phone_verified`),
           backend.call(`/rest/v1/daese_sensitive_details?application_id=eq.${body.id}&select=religion`),
           backend.call(`/storage/v1/object/sign/application-photos/${rows[0].photo_path}`, { method: "POST", body: { expiresIn: 60 } }).catch(() => null),
         ]);
@@ -91,7 +101,7 @@ export function createAdminHandler(env, { backendFactory = createBackend, fetche
         const photoUrl = typeof signedPath === "string" && signedPath.startsWith("/object/sign/application-photos/")
           ? `${env.SUPABASE_URL.replace(/\/$/, "")}/storage/v1${signedPath}` : null;
         const { photo_path, ...member } = rows[0];
-        return json({ member, sensitive: sensitive[0] || null, photoUrl }, 200, headers);
+        return json({ member, contact: contact[0] || null, sensitive: sensitive[0] || null, photoUrl }, 200, headers);
       }
       if (body.action === "detail") {
         const rows = await backend.call(`/rest/v1/daese_applications?id=eq.${body.id}&select=*`);

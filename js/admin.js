@@ -2,12 +2,14 @@
   "use strict";
   const $ = (selector) => document.querySelector(selector);
   const endpoint = window.DaeseBackend?.adminEndpoint || "/api/admin";
+  const sessionStore = window.DaeseAdminSession;
   const labels = { submitted: "접수", approved: "승인", rejected: "미승인", pending: "미검토" };
   let token = "", offset = 0, current = null, generation = 0, expiresTimer = null, loading = false;
   function notify(message, error = false) { $('[data-message]').textContent = message; $('[data-message]').classList.toggle('is-error', error); }
   function clearSession() {
-    token = ""; current = null; generation++; clearTimeout(expiresTimer);
+    token = ""; sessionStore.clear(); current = null; generation++; clearTimeout(expiresTimer);
     $('[data-login]').hidden = false; $('[data-workspace]').hidden = true; $('[data-logout]').hidden = true;
+    $('[data-admin-nav]').hidden = true;
     $('[data-list]').replaceChildren(); $('[data-detail]').replaceChildren(); $('[data-login]').reset();
     $('[data-delete-dialog]').close(); $('#delete-confirm').value = "";
   }
@@ -130,9 +132,9 @@
       let session;
       try { session = await api({ action:'login', email:form.elements.email.value.trim(), password:form.elements.password.value }); }
       finally { form.elements.password.value = ''; }
-      token = session.accessToken; generation++; offset = 0;
+      token = session.accessToken; sessionStore.save(session.accessToken, session.expiresIn); generation++; offset = 0;
       expiresTimer = setTimeout(() => { clearSession(); notify('로그인이 만료되었습니다. 다시 로그인해주세요.'); }, Math.max(1, session.expiresIn - 30) * 1000);
-      form.hidden = true; $('[data-workspace]').hidden = false; $('[data-logout]').hidden = false;
+      form.hidden = true; $('[data-workspace]').hidden = false; $('[data-logout]').hidden = false; $('[data-admin-nav]').hidden = false;
       await loadList(); notify('관리자로 로그인했습니다.');
     });
   });
@@ -168,5 +170,11 @@
     await loadList();
     notify(result.photosPending ? '신청 정보는 삭제했습니다. 사진 삭제는 대기 중입니다. 사진 삭제 재시도 버튼을 눌러주세요.' : '신청 정보와 사진 삭제 처리를 완료했습니다.');
   }));
-  window.addEventListener('pagehide', clearSession);
+  const savedSession = recoveryToken ? null : sessionStore.load();
+  if (savedSession) {
+    token = savedSession.accessToken;
+    expiresTimer = setTimeout(() => { clearSession(); notify('로그인이 만료되었습니다. 다시 로그인해주세요.'); }, Math.max(1, savedSession.expiresIn - 30) * 1000);
+    $('[data-login]').hidden = true; $('[data-workspace]').hidden = false; $('[data-logout]').hidden = false; $('[data-admin-nav]').hidden = false;
+    run(async () => { await loadList(); notify('관리자 로그인을 유지했습니다.'); });
+  }
 })();

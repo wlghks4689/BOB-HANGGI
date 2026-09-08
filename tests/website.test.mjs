@@ -31,12 +31,19 @@ test('admin review uses one application status and omits redundant consent metad
   assert.match(admin, /사진 확인 불가, 연락처 인증 안 됨/);
 });
 test('member pool keeps a balanced gender board and comparison dialog without contact fields', async () => {
-  const [page,script,style]=await Promise.all([
-    readFile(new URL('../pool.html',import.meta.url),'utf8'),readFile(new URL('../js/pool.js',import.meta.url),'utf8'),readFile(new URL('../css/pool.css',import.meta.url),'utf8'),
+  const [page,adminPage,script,adminScript,sessionScript,style]=await Promise.all([
+    readFile(new URL('../pool.html',import.meta.url),'utf8'),readFile(new URL('../admin.html',import.meta.url),'utf8'),readFile(new URL('../js/pool.js',import.meta.url),'utf8'),
+    readFile(new URL('../js/admin.js',import.meta.url),'utf8'),readFile(new URL('../js/admin-session.js',import.meta.url),'utf8'),readFile(new URL('../css/pool.css',import.meta.url),'utf8'),
   ]);
   assert.match(page,/data-men/);assert.match(page,/data-women/);assert.match(page,/<dialog[^>]+data-compare/);
+  for(const html of [page,adminPage]){assert.match(html,/>신청 관리</);assert.match(html,/>회원 관리</);assert.match(html,/data-admin-nav/);}
   assert.match(script,/action:'pool-list'/);assert.match(script,/action:'pool-detail'/);assert.match(script,/selected\.male && selected\.female/);
-  assert.doesNotMatch(script,/daese_contacts|phone|admin_note|consent/);
+  assert.doesNotMatch(script,/admin_note|consent/);
+  assert.match(script,/location\.hostname === 'localhost'/);assert.match(script,/M001/);assert.match(script,/W004/);assert.match(script,/member\.mock\?Promise\.resolve/);
+  for(const status of ['matching_available','matching_progress','dormant'])assert.match(script,new RegExp(status));
+  assert.match(script,/selected\[member\.gender\]\?\.id === member\.id \? null : member/);assert.doesNotMatch(script,/✓ 선택됨/);assert.match(script,/상세보기/);
+  assert.match(sessionScript,/sessionStorage/);assert.match(script,/sessionStore\.load/);assert.match(adminScript,/sessionStore\.load/);
+  assert.doesNotMatch(script,/pagehide/);assert.doesNotMatch(adminScript,/pagehide/);
   assert.match(style,/grid-template-columns:1fr 1fr/);assert.match(style,/@media\(max-width:760px\)/);
 });
 test('HTTP serves website, blocks private source and rejects foreign Host', async t => {

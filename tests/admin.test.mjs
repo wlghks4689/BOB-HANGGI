@@ -19,7 +19,7 @@ function mock({active=true, invalid=false}={}) {
   }, async rpc(name,options){calls.push({name,options});return true;} };
 }
 test('all admin operations require authenticated, active allowlisted user', async () => {
-  for (const action of ['list','pool-list','detail','pool-detail','review','delete','cleanup']) {
+  for (const action of ['list','pool-list','detail','pool-photo','pool-detail','review','delete','cleanup']) {
     for (const [options,token,status] of [[{},'',401],[{invalid:true},'forged',401],[{active:false},'user-jwt',403]]) {
       const backend=mock(options), handle=createAdminHandler(env,{backendFactory:()=>backend});
       const result=await handle(req({action,id},token)); assert.equal(result.status,status);
@@ -34,7 +34,7 @@ test('login verifies admin membership and never returns refresh token', async ()
   assert.ok(!JSON.stringify(data).includes('never-return-this'));
   const denied=await createAdminHandler(env,{backendFactory:()=>mock({active:false})})(req({action:'login',email:'test@example.invalid',password:'fake'},''));assert.equal(denied.status,403);
 });
-test('member pool lists approved summaries and returns a comparison profile without contact data', async () => {
+test('member pool lists approved summaries and returns complete administrator detail data', async () => {
   const backend=mock();
   backend.call=async(path,options)=>{
     backend.calls.push({path,options});
@@ -42,6 +42,7 @@ test('member pool lists approved summaries and returns a comparison profile with
     if(path.startsWith('/rest/v1/daese_admins'))return[{user_id:actorId}];
     if(path.includes('status=eq.approved')&&path.includes('photo_path'))return[{id,name:'가상회원',birth_year:2000,gender:'male',region_city:'daejeon',region_detail:'서구',job_category:'학생',job_other:null,height:'175',mbti:'ENFJ',smoking:'none',drinking:'none',pet:'none',preferred_age_relation:'any',interests:['산책'],priority_condition:'가상 조건',preferred_condition:'',preferred_age_min:24,preferred_age_max:30,photo_path:'fake.jpg'}];
     if(path.includes('status=eq.approved'))return[{id,name:'가상회원',gender:'male'}];
+    if(path.startsWith('/rest/v1/daese_contacts'))return[{phone:'01000000000',phone_verified:false}];
     if(path.startsWith('/rest/v1/daese_sensitive_details'))return[];
     if(path.startsWith('/storage/v1/object/sign/'))return{signedURL:'/object/sign/application-photos/fake-token'};
     throw new Error(`Unexpected request: ${path}`);
@@ -49,9 +50,9 @@ test('member pool lists approved summaries and returns a comparison profile with
   const handle=createAdminHandler(env,{backendFactory:()=>backend});
   const list=await handle(req({action:'pool-list'}));assert.equal(list.status,200);assert.equal((await list.json()).members.length,1);
   const detail=await handle(req({action:'pool-detail',id}));const data=await detail.json();assert.equal(detail.status,200);
-  assert.equal(data.member.photo_path,undefined);assert.equal(data.contact,undefined);assert.ok(data.photoUrl.endsWith('/fake-token'));
+  assert.equal(data.member.photo_path,undefined);assert.equal(data.contact.phone,'01000000000');assert.ok(data.photoUrl.endsWith('/fake-token'));
   assert.ok(backend.calls.some(call=>call.path.includes('status=eq.approved')));
-  assert.ok(!backend.calls.some(call=>call.path.includes('daese_contacts')||call.path.includes('daese_consents')));
+  assert.ok(backend.calls.some(call=>call.path.includes('daese_contacts')));assert.ok(!backend.calls.some(call=>call.path.includes('daese_consents')));
 });
 test('password recovery token can set a strong password only for an allowlisted admin', async () => {
   const backend=mock(), handle=createAdminHandler(env,{backendFactory:()=>backend});

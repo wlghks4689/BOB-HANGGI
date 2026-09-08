@@ -3,6 +3,9 @@
 .admin-header { justify-content: space-between; margin-bottom: 20px; }
 .admin-header h1 { font-size: 28px; }
 .admin-header p, .admin-help { color: var(--secondary); }
+.admin-tabs { display:flex; gap:4px; margin:-4px 0 24px; padding:4px; border:1px solid var(--line); border-radius:10px; background:var(--surface); }
+.admin-tabs a { flex:1; min-height:44px; display:grid; place-items:center; border-radius:7px; color:var(--secondary); text-decoration:none; }
+.admin-tabs a[aria-current="page"] { color:white; background:var(--charcoal); }
 .admin-shell h2 { font-size: 21px; margin-bottom: 12px; }
 .admin-shell button, .admin-shell input, .admin-shell select, .admin-shell textarea { min-height: 44px; border: 1px solid var(--line); border-radius: 8px; padding: 10px 14px; background: white; }
 .admin-shell button { cursor: pointer; }
@@ -22,7 +25,7 @@
 .admin-list small { display: block; font-size: 14px; color: var(--secondary); }
 .admin-pagination { justify-content: space-between; margin-top: 16px; }
 .admin-detail { padding: 24px; background: var(--surface); border: 1px solid var(--line); border-radius: 12px; overflow-wrap: anywhere; }
-.admin-detail img { width: min(100%, 400px); aspect-ratio: 1780 / 1090; object-fit: cover; border-radius: 10px; }
+.admin-detail img { width: min(100%, 320px); aspect-ratio: 4 / 5; object-fit: cover; object-position:center top; border-radius: 10px; }
 .admin-detail dl { display: grid; grid-template-columns: 120px minmax(0, 1fr); gap: 10px; margin: 20px 0; }
 .admin-detail dt { color: var(--secondary); }
 .admin-detail dd { margin: 0; white-space: pre-wrap; }
