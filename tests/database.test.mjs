@@ -82,5 +82,8 @@ test('PostgreSQL migration, access control, intake, recovery and administrator m
     assert.ok((await db.query('select photo_path from public.daese_photo_cleanup')).rows.length>0);
     const audit=(await db.query('select reason,photo_deleted_at from public.daese_purge_audit where application_id=$1',[id])).rows[0];
     assert.equal(audit.reason,'service_ended'); assert.equal(audit.photo_deleted_at,null);
+    await db.query("update public.daese_purge_audit set photo_deleted_at=now()-interval '91 days' where application_id=$1",[id]);
+    assert.equal(await backend.rpc('daese_prune_purge_audit',{}),1);
+    assert.equal((await db.query('select count(*)::integer n from public.daese_purge_audit where application_id=$1',[id])).rows[0].n,0);
   });
 });

@@ -39,6 +39,7 @@ export async function rateKey(secret, value) {
 }
 
 export async function cleanupPhotos(backend) {
+  const auditRemoved = await backend.rpc("daese_prune_purge_audit", {});
   const purged = await backend.rpc("daese_prepare_retention_purge", { p_limit: 100 });
   await backend.rpc("daese_prepare_cleanup", {});
   const rows = await backend.call("/rest/v1/daese_photo_cleanup?select=photo_path&order=queued_at&limit=100");
@@ -53,5 +54,5 @@ export async function cleanupPhotos(backend) {
       await backend.rpc("daese_record_photo_cleanup_result", { p_photo_path: row.photo_path, p_success: false, p_error: "storage_delete_failed" });
     }
   }
-  return { purged, removed, failed };
+  return { auditRemoved, purged, removed, failed };
 }

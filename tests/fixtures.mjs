@@ -57,6 +57,7 @@ const signatures = {
   daese_mark_retention_event:['p_id','p_actor','p_event','p_expected_updated_at'],
   daese_prepare_retention_purge:['p_limit'],
   daese_record_photo_cleanup_result:['p_photo_path','p_success','p_error'],
+  daese_prune_purge_audit:[],
 };
 export function sqlBackend(db) {
   return {
