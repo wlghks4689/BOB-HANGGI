@@ -2,7 +2,7 @@
   "use strict";
   const $ = (selector) => document.querySelector(selector);
   const endpoint = window.DaeseBackend?.adminEndpoint || "/api/admin";
-  const labels = { submitted: "접수", reviewing: "검토 중", approved: "승인", rejected: "미승인", pending: "미검토" };
+  const labels = { submitted: "접수", approved: "승인", rejected: "미승인", pending: "미검토" };
   let token = "", offset = 0, current = null, generation = 0, expiresTimer = null, loading = false;
   function notify(message, error = false) { $('[data-message]').textContent = message; $('[data-message]').classList.toggle('is-error', error); }
   function clearSession() {
@@ -89,25 +89,39 @@
       ['선호 나이 관계', { older:'연상', younger:'연하', same:'동갑', any:'상관없음' }[a.preferred_age_relation]],
       ['희망 나이', `${a.preferred_age_min}~${a.preferred_age_max}세`], ['우선 조건', a.priority_condition], ['있으면 좋은 조건', a.preferred_condition || '—'],
       ['연락처', `${result.contact?.phone || '—'} (본인 인증 안 됨)`], ['종교', result.sensitive?.religion || '수집하지 않음'],
-      ['필수 동의', result.consent?.required_consent ? '동의' : '확인 필요'], ['종교 수집 동의', result.consent?.religion_consent ? '동의' : '미동의'],
-      ['동의 문서 버전', result.consent?.document_version], ['동의 시각', date(result.consent?.consented_at)],
+      ['종교 수집 동의', result.consent?.religion_consent ? '동의' : '미동의'],
+      ['자동 파기 예정', date(a.purge_due_at)],
     ];
     const dl = element('dl'); for (const [key, value] of fields) dl.append(element('dt', key), element('dd', String(value ?? '—'))); target.append(dl);
     const form = element('form');
-    selectField(form, '사진 검토', 'photoReview', ['pending','approved','rejected'], a.photo_review);
-    selectField(form, '신청 상태', 'status', ['submitted','reviewing','approved','rejected'], a.status);
+    selectField(form, '신청 상태', 'status', ['submitted','approved','rejected'], a.status);
     const label = element('label', '관리자 메모'); label.htmlFor = 'review-note';
     const note = element('textarea'); note.name = 'note'; note.id = 'review-note'; note.maxLength = 3000; note.rows = 4; note.value = a.admin_note;
+    note.placeholder = '미승인 사유나 확인할 내용을 입력해주세요. 예: 사진 확인 불가, 연락처 인증 안 됨';
     const actions = element('div', undefined, 'admin-actions');
     const save = element('button', '검토 내용 저장'); save.type = 'submit';
     const remove = element('button', '신청서 삭제', 'danger'); remove.type = 'button';
     remove.addEventListener('click', () => { if (!current || loading) return; $('[data-delete-id]').textContent = current.id; $('#delete-confirm').value = ''; $('[data-delete-dialog]').showModal(); });
     actions.append(save, remove); form.append(label, note, actions);
     form.addEventListener('submit', event => { event.preventDefault(); const data = new FormData(form);
-      run(async () => { await api({ action:'review', id:a.id, updatedAt:a.updated_at, status:data.get('status'), photoReview:data.get('photoReview'), note:data.get('note') });
+      run(async () => { await api({ action:'review', id:a.id, updatedAt:a.updated_at, status:data.get('status'), note:data.get('note') });
         await loadDetail(a.id); await loadList(); notify('검토 내용을 저장했습니다.'); });
     });
     target.append(form); target.focus();
+    const retentionActions = element('div', undefined, 'admin-actions');
+    const retentionButton = (text, eventName, confirmation) => {
+      const button = element('button', text); button.type = 'button';
+      button.addEventListener('click', () => {
+        if (!confirm(confirmation)) return;
+        run(async () => { await api({ action:'retention-event', id:a.id, updatedAt:a.updated_at, event:eventName });
+          await loadDetail(a.id); await loadList(); notify('자동 파기 기준 시각을 기록했습니다.'); });
+      });
+      retentionActions.append(button);
+    };
+    if (a.status === 'rejected' && !a.result_notified_at) retentionButton('미승인 결과 안내 완료', 'result_notified', '실제로 미승인 결과를 안내했습니까? 확인 시 48시간 이내 자동 파기가 예약됩니다.');
+    if (a.status === 'approved' && !a.service_ended_at) retentionButton('서비스 이용 종료 기록', 'service_ended', '서비스 이용이 실제로 종료되었습니까? 확인 시 48시간 이내 자동 파기가 예약됩니다.');
+    if (!a.deletion_requested_at) retentionButton('삭제 요청 접수 기록', 'deletion_requested', '본인의 개인정보 삭제 요청을 확인했습니까? 확인 시 48시간 이내 자동 파기가 예약됩니다.');
+    if (retentionActions.childElementCount) target.append(retentionActions);
   }
   $('[data-login]').addEventListener('submit', event => {
     event.preventDefault();
@@ -143,7 +157,8 @@
   $('[data-filter]').addEventListener('change', () => run(async () => { offset = 0; await loadList(); }));
   $('[data-prev]').addEventListener('click', () => run(async () => { offset = Math.max(0, offset - 25); await loadList(); }));
   $('[data-next]').addEventListener('click', () => run(async () => { offset += 25; await loadList(); }));
-  $('[data-cleanup]').addEventListener('click', () => run(async () => { const result = await api({ action:'cleanup' }); notify(`삭제 대기 사진 ${result.removed}건을 정리했습니다.`); }));
+  $('[data-cleanup]').addEventListener('click', () => run(async () => { const result = await api({ action:'cleanup' });
+    notify(`기한 만료 신청 ${result.purged}건, 사진 ${result.removed}건을 정리했습니다.${result.failed ? ` 실패 ${result.failed}건은 재시도 대기 중입니다.` : ''}`, result.failed > 0); }));
   $('[data-delete-cancel]').addEventListener('click', () => $('[data-delete-dialog]').close());
   $('[data-delete-confirm]').addEventListener('click', () => run(async () => {
     if (!current) return;

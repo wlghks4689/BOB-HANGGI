@@ -114,7 +114,7 @@ h1, h2, p { margin: 0; }
   margin-top: 34px; padding-top: 18px; border-top: 1px solid #d6d3c5; font-size: 0.78rem;
 }
 .introduce-contact span { color: #777a68; }
-.introduce-contact a { min-height: 44px; display: inline-flex; align-items: center; color: #4f5a3c; text-decoration: underline; text-underline-offset: 4px; }
+.introduce-contact-link { min-height: 44px; display: inline-flex; align-items: center; color: #777a68; }
 body:has(.introduce-dialog[open]) { overflow: hidden; }
 
 @media (max-width: 560px) {

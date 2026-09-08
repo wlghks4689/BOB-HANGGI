@@ -6,16 +6,16 @@ import { CONSENT_VERSION } from '../supabase/functions/_shared/validation.mjs';
 const read = path => readFile(new URL(`../${path}`, import.meta.url), 'utf8');
 const active = ['privacy.html','apply.html','docs/consent-2026-09-07-v1.md','docs/SUPABASE_SETUP.md'];
 
-test('active notices retain four distinct policy clocks and the confirmed contact', async () => {
+test('active notices retain four distinct policy clocks without a temporary contact address', async () => {
   for (const file of active) {
     const text=await read(file);
     assert.match(text,/(?:신청 접수 후|신청은 원칙적으로 접수 후) 최대 48시간 이내 심사/,file);
     assert.match(text,/접수일로부터 30일을 초과하여 보관하지/,file);
     assert.match(text,/(?:미승인 신청자: 심사 결과 안내 후 48시간 이내 개인정보와 프로필 사진|미승인 신청자의 개인정보와 프로필 사진은 심사 결과 안내 후 48시간 이내)/,file);
     assert.match(text,/(?:승인 회원: 서비스 이용 종료 또는 개인정보 삭제 요청 후 48시간 이내 개인정보와 프로필 사진|승인 회원의 개인정보와 프로필 사진은 서비스 이용 종료 또는 개인정보 삭제 요청 후 48시간 이내)/,file);
-    assert.ok(text.includes('mailto:wlghks1778@gmail.com'),file);
-    assert.ok(!text.includes('wlghks4689@gmail.com'),file);
-    if (!['apply.html','privacy.html'].includes(file)) assert.match(text,/자동 파기.*(?:미구현|아직 구현되지|구현 및 검증 후)/,file);
+    assert.ok(!text.includes('mailto:'),file);
+    assert.ok(!/@gmail\.com/.test(text),file);
+    if (!['apply.html','privacy.html'].includes(file)) assert.match(text,/자동 파기.*(?:구현|5분)/,file);
   }
 });
 test('public policy has eight user-focused sections and no internal implementation report', async () => {
@@ -32,8 +32,8 @@ test('public policy has eight user-focused sections and no internal implementati
 });
 test('internal operations document retains removed implementation and release-blocker details', async () => {
   const operations=await read('docs/PRIVACY_OPERATIONS.md');
-  for (const item of ['현재 개인정보 데이터 흐름','daese_applications','민감정보 종교 처리 방식','관리자 인증 구조','RLS 및 권한 구조','서버 Secret 관리 원칙','HMAC 기반 요청 제한 구조','request ID, fingerprint 및 intake job 구조','프로필 사진 Storage 및 임시 URL 구조','관리자 삭제 흐름','사진 삭제 실패 및 재시도','자동 보유기간 파기 상태','개인정보 사고 대응 기본 체크리스트','외부 서비스 계약·국외이전 검토 TODO','RETENTION_AUTOMATION_VERIFIED=false']) assert.ok(operations.includes(item),item);
-  assert.match(operations,/자동 파기는 현재 미구현/);
+  for (const item of ['현재 개인정보 데이터 흐름','daese_applications','민감정보 종교 처리 방식','관리자 인증 구조','RLS 및 권한 구조','서버 Secret 관리 원칙','HMAC 기반 요청 제한 구조','request ID, fingerprint 및 intake job 구조','프로필 사진 Storage 및 임시 URL 구조','관리자 삭제 흐름','사진 삭제 실패 및 재시도','자동 보유기간 파기 상태','개인정보 사고 대응 기본 체크리스트','외부 서비스 계약·국외이전 검토 TODO','RETENTION_AUTOMATION_VERIFIED=true']) assert.ok(operations.includes(item),item);
+  assert.match(operations,/5분 Cron/);
   assert.match(operations,/미처리 신청: 접수일로부터 30일/);
   assert.match(operations,/미승인 신청자: 심사 결과를 실제로 안내한 시각부터 48시간/);
   assert.match(operations,/승인 회원: 서비스 이용 종료 또는 확인된 삭제 요청 시각부터 48시간/);
@@ -60,7 +60,8 @@ test('landing navigation and application consent keep clear policy links', async
   assert.match(consentBlock,/<dt>비공개 정보<\/dt>/);
   assert.ok(!consentBlock.match(/<dt>비공개 정보<\/dt><dd>[^<]*관리자 메모/));
   assert.ok(!consentBlock.includes('현재 상대방에게 프로필을 자동 제공하지 않습니다.'));
-  assert.match(await read('index.html'),/href="mailto:wlghks1778@gmail\.com">문의하기<\/a>/);
+  assert.match(await read('index.html'),/TODO: 도메인 문의 주소를 개설한 뒤 링크를 연결한다/);
+  assert.match(await read('index.html'),/<span class="introduce-contact-link">문의하기<\/span>/);
 });
 test('profile preview starts folded on desktop and mobile', async () => {
   const html=await read('apply.html'), script=await read('js/main.js');

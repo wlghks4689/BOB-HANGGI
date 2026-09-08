@@ -52,8 +52,8 @@ test('cross-origin and missing-origin POST rejected before backend', async () =>
   assert.equal((await handle(request(validForm(),null))).status,403);
   const options = await handle(new Request('http://localhost',{method:'OPTIONS',headers:{Origin:'http://localhost:4174'}})); assert.equal(options.status,204);
 });
-test('production intake stays closed with all environment flags enabled until retention is verified', async () => {
-  const readyEnv = {...env, TURNSTILE_SITE_KEY:'fake-site-key', TURNSTILE_SECRET_KEY:'fake-captcha-secret'};
+test('production intake stays closed until the explicit application flag is enabled', async () => {
+  const readyEnv = {...env, APPLICATIONS_ENABLED:'false', TURNSTILE_SITE_KEY:'fake-site-key', TURNSTILE_SECRET_KEY:'fake-captcha-secret'};
   const neverCall = () => { throw new Error('closed intake must not reach backend or captcha'); };
   for (const local of [false,true]) {
     const handle=createIntakeHandler({...readyEnv, ALLOW_LOCAL_TEST_SUBMISSIONS:local?'false':'true'}, {local,backendFactory:neverCall,fetcher:neverCall});
@@ -61,6 +61,8 @@ test('production intake stays closed with all environment flags enabled until re
     assert.equal(state.enabled,false);assert.equal(state.testMode,false);assert.equal(state.turnstileSiteKey,'');
     assert.equal((await handle(request())).status,503);
   }
+  const state=await (await createIntakeHandler({...readyEnv,APPLICATIONS_ENABLED:'true'})(new Request('http://localhost'))).json();
+  assert.equal(state.enabled,true);assert.equal(state.testMode,false);assert.equal(state.turnstileSiteKey,'fake-site-key');
 });
 test('upload failure does not report success or delete a possibly committed photo', async () => {
   const handle=createIntakeHandler(env,{local:true,backendFactory:()=>({rpc:async()=>({state:'claimed',photo_path:'x'}),upload:async()=>{throw new Error('private-token');}})});

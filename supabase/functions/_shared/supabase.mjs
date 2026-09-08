@@ -39,13 +39,19 @@ export async function rateKey(secret, value) {
 }
 
 export async function cleanupPhotos(backend) {
+  const purged = await backend.rpc("daese_prepare_retention_purge", { p_limit: 100 });
   await backend.rpc("daese_prepare_cleanup", {});
   const rows = await backend.call("/rest/v1/daese_photo_cleanup?select=photo_path&order=queued_at&limit=100");
-  let removed = 0;
+  let removed = 0, failed = 0;
   for (const row of rows) {
-    await backend.removePhoto(row.photo_path);
-    await backend.call(`/rest/v1/daese_photo_cleanup?photo_path=eq.${encodeURIComponent(row.photo_path)}`, { method: "DELETE" });
-    removed++;
+    try {
+      await backend.removePhoto(row.photo_path);
+      await backend.rpc("daese_record_photo_cleanup_result", { p_photo_path: row.photo_path, p_success: true, p_error: null });
+      removed++;
+    } catch {
+      failed++;
+      await backend.rpc("daese_record_photo_cleanup_result", { p_photo_path: row.photo_path, p_success: false, p_error: "storage_delete_failed" });
+    }
   }
-  return removed;
+  return { purged, removed, failed };
 }

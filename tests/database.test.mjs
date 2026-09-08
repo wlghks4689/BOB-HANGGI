@@ -29,7 +29,9 @@ test('PostgreSQL migration, access control, intake, recovery and administrator m
     assert.equal((await handle(request(form),'local-test')).status,200);
     for (const table of ['daese_applications','daese_contacts','daese_consents']) assert.equal((await db.query(`select count(*)::integer as n from public.${table}`)).rows[0].n,1);
     assert.equal((await db.query('select count(*)::integer as n from public.daese_sensitive_details')).rows[0].n,0);
-    const a=(await db.query('select status,photo_review from public.daese_applications')).rows[0]; assert.equal(a.status,'submitted'); assert.equal(a.photo_review,'pending');
+    const a=(await db.query('select status,photo_review,purge_reason,purge_due_at,created_at from public.daese_applications')).rows[0];
+    assert.equal(a.status,'submitted'); assert.equal(a.photo_review,'pending'); assert.equal(a.purge_reason,'intake_timeout');
+    assert.ok(new Date(a.purge_due_at)-new Date(a.created_at) <= 30*24*60*60*1000);
     assert.equal((await db.query('select phone_verified from public.daese_contacts')).rows[0].phone_verified,false);
     assert.equal((await db.query('select document_version from public.daese_consents')).rows[0].document_version,CONSENT_VERSION);
   });
@@ -70,10 +72,15 @@ test('PostgreSQL migration, access control, intake, recovery and administrator m
     assert.equal(await backend.rpc('daese_review_application',args),false);
     assert.equal((await db.query('select count(*)::integer n from public.daese_review_events')).rows[0].n,1);
   });
-  await t.test('delete cascades personal data and queues physical photo deletion', async () => {
-    assert.equal(await backend.rpc('daese_delete_application',{p_id:id,p_actor:actorId}),true);
+  await t.test('retention event advances the deadline and due purge removes personal data while queuing the photo', async () => {
+    const row=(await db.query('select updated_at from public.daese_applications where id=$1',[id])).rows[0];
+    const due=await backend.rpc('daese_mark_retention_event',{p_id:id,p_actor:actorId,p_event:'service_ended',p_expected_updated_at:row.updated_at.toISOString()});
+    assert.ok(new Date(due).getTime()<=Date.now()+47*60*60*1000+5000);
+    await db.query("update public.daese_applications set purge_due_at=now()-interval '1 second' where id=$1",[id]);
+    assert.equal(await backend.rpc('daese_prepare_retention_purge',{p_limit:100}),1);
     for (const table of ['daese_applications','daese_contacts','daese_consents','daese_review_events']) assert.equal((await db.query(`select count(*)::integer n from public.${table}`)).rows[0].n,0);
     assert.ok((await db.query('select photo_path from public.daese_photo_cleanup')).rows.length>0);
-    assert.equal(await backend.rpc('daese_delete_application',{p_id:id,p_actor:actorId}),false);
+    const audit=(await db.query('select reason,photo_deleted_at from public.daese_purge_audit where application_id=$1',[id])).rows[0];
+    assert.equal(audit.reason,'service_ended'); assert.equal(audit.photo_deleted_at,null);
   });
 });

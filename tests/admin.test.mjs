@@ -16,7 +16,7 @@ function mock({active=true, invalid=false}={}) {
     if (path.startsWith('/rest/v1/daese_applications')) return [];
     if (path.startsWith('/rest/v1/daese_photo_cleanup')) return [];
     throw new Error('Unexpected request');
-  }, async rpc(name){calls.push({name});return true;} };
+  }, async rpc(name,options){calls.push({name,options});return true;} };
 }
 test('all admin operations require authenticated, active allowlisted user', async () => {
   for (const action of ['list','detail','review','delete','cleanup']) {
@@ -46,19 +46,23 @@ test('password recovery token can set a strong password only for an allowlisted 
 });
 test('list filters and pagination validate input before querying applications', async () => {
   const handle=createAdminHandler(env,{backendFactory:()=>mock()});
-  for (const body of [{action:'list',offset:-1},{action:'list',status:'approved&select=*'}]) assert.equal((await handle(req(body))).status,400);
+  for (const body of [{action:'list',offset:-1},{action:'list',status:'approved&select=*'},{action:'list',status:'reviewing'}]) assert.equal((await handle(req(body))).status,400);
   assert.equal((await handle(req({action:'list'}))).status,200);
 });
-test('delete requires exact id confirmation; review refuses approval without photo approval', async () => {
+test('delete requires exact id confirmation; review derives the internal photo state from application status', async () => {
   const backend=mock(),handle=createAdminHandler(env,{backendFactory:()=>backend});
   assert.equal((await handle(req({action:'delete',id,confirmId:'wrong'}))).status,400);
-  assert.equal((await handle(req({action:'review',id,status:'approved',photoReview:'pending',note:'',updatedAt:new Date().toISOString()}))).status,400);
-  assert.ok(!backend.calls.some(c=>c.name));
+  assert.equal((await handle(req({action:'review',id,status:'approved',photoReview:'pending',note:'',updatedAt:new Date().toISOString()}))).status,200);
+  const review=backend.calls.find(c=>c.name==='daese_review_application');
+  assert.equal(review.options.p_photo_review,'approved');
+  backend.calls.length=0;
+  assert.equal((await handle(req({action:'review',id,status:'rejected',photoReview:'approved',note:'연락처 인증 안 됨',updatedAt:new Date().toISOString()}))).status,200);
+  assert.equal(backend.calls.find(c=>c.name==='daese_review_application').options.p_photo_review,'pending');
 });
 test('stale review returns conflict; actor comes from verified auth, not body', async () => {
   const backend=mock();let params;backend.rpc=async(_name,body)=>{params=body;return false;};
   const handle=createAdminHandler(env,{backendFactory:()=>backend});
-  const result=await handle(req({action:'review',id,actorId:'attacker',status:'reviewing',photoReview:'pending',note:'',updatedAt:new Date().toISOString()}));
+  const result=await handle(req({action:'review',id,actorId:'attacker',status:'submitted',photoReview:'pending',note:'',updatedAt:new Date().toISOString()}));
   assert.equal(result.status,409);assert.equal(params.p_actor,actorId);
 });
 test('photo deletion failure is returned as pending, not falsely reported complete', async () => {

@@ -8,3 +8,7 @@ entrypoint = "./functions/submit-application/index.mjs"
 [functions.admin-applications]
 verify_jwt = false
 entrypoint = "./functions/admin-applications/index.mjs"
+
+[functions.retention-cleanup]
+verify_jwt = false
+entrypoint = "./functions/retention-cleanup/index.mjs"

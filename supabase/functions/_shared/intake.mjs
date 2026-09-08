@@ -1,9 +1,9 @@
 import { CONSENT_VERSION, InputError, limitedFormData, validateForm, validatePhoto } from "./validation.mjs";
 import { createBackend, rateKey, sha256 } from "./supabase.mjs";
 
-// Release blocker: implement and verify the 48-hour / 30-day retention jobs first.
+// Verified against the development project: DB purge, Storage deletion, retry, and scheduled invocation.
 // An environment toggle alone must not reopen real-data intake.
-const RETENTION_AUTOMATION_VERIFIED = false;
+const RETENTION_AUTOMATION_VERIFIED = true;
 
 export function cors(request, env) {
   const origin = request.headers.get("origin");
@@ -52,6 +52,7 @@ async function verifyCaptcha(token, origin, env, fetcher) {
 export function createIntakeHandler(env, { local = false, backendFactory = createBackend, fetcher = fetch } = {}) {
   return async function handle(request, clientAddress = "unknown") {
     let headers = { "Content-Type": "application/json", "Cache-Control": "no-store" };
+    let stage = "request";
     try {
       headers = cors(request, env);
       if (request.method === "OPTIONS") return new Response(null, { status: 204, headers });
@@ -70,6 +71,7 @@ export function createIntakeHandler(env, { local = false, backendFactory = creat
       if (!settings.testing) await verifyCaptcha(form.get("cf-turnstile-response"), origin, env, fetcher);
       const fingerprint = await sha256(`${JSON.stringify(payload)}:${await sha256(bytes)}`);
       const backend = backendFactory(env, fetcher);
+      stage = "claim";
       const claim = await backend.rpc("daese_claim_intake", {
         p_id: requestId, p_fingerprint: fingerprint,
         p_rate_key: await rateKey(env.RATE_LIMIT_SECRET, clientAddress),
@@ -79,13 +81,16 @@ export function createIntakeHandler(env, { local = false, backendFactory = creat
       if (claim.state === "busy") throw new InputError("이전 신청을 처리 중입니다. 잠시 후 같은 내용으로 다시 시도해주세요.", "", 409);
       if (claim.state === "submitted") return json({ id: requestId, submitted: true }, 200, headers);
       if (claim.state !== "claimed") throw new Error("Invalid claim response");
+      stage = "upload";
       await backend.upload(claim.photo_path, bytes);
+      stage = "finish";
       const id = await backend.rpc("daese_finish_intake", { p_id: requestId, p_lease_id: claim.lease_id, p_data: payload });
       if (id !== requestId) throw new Error("Invalid receipt");
       return json({ id, submitted: true }, 201, headers);
     } catch (error) {
       // An upload/commit timeout is ambiguous. Do not delete the photo here:
       // the DB transaction might have committed. Retried IDs and cleanup leases resolve it.
+      if (local) console.error("Local intake failed", { stage, name: error?.name, status: error?.status });
       return publicError(error, headers);
     }
   };

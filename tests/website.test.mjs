@@ -1,5 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
+import { readFile } from 'node:fs/promises';
 import { request as httpRequest } from 'node:http';
 import { createWebsiteServer, isPublicPath } from '../scripts/serve-website.mjs';
 import { CONSENT_VERSION } from '../supabase/functions/_shared/validation.mjs';
@@ -7,6 +8,27 @@ import { CONSENT_VERSION } from '../supabase/functions/_shared/validation.mjs';
 test('public files allowlist rejects environment, Git, server, SQL, traversal and backup files', () => {
   for (const path of ['/.env.local','/.git/config','/package.json','/scripts/serve-website.mjs','/supabase/migrations/x.sql','/js/../.env','/assets/.secret.js','/js/x.js.map','/js/x.js:secret','/js\\main.js']) assert.equal(isPublicPath(path),false,path);
   for (const path of ['/index.html','/apply.html','/privacy.html','/css/privacy.css','/admin.html','/js/main.js','/assets/fonts/NanumGothic-Regular.ttf']) assert.equal(isPublicPath(path),true,path);
+});
+
+test('browser configuration uses local APIs only on localhost', async () => {
+  const config = await readFile(new URL('../js/backend-config.js', import.meta.url), 'utf8');
+  assert.match(config, /\["localhost", "127\.0\.0\.1"\]\.includes\(window\.location\.hostname\)/);
+  assert.match(config, /\? "\/api\/applications"/);
+  assert.match(config, /\? "\/api\/admin"/);
+  assert.match(config, /https:\/\/mfezbzrseuikeltzdtwe\.supabase\.co\/functions\/v1\/submit-application/);
+  assert.match(config, /https:\/\/mfezbzrseuikeltzdtwe\.supabase\.co\/functions\/v1\/admin-applications/);
+});
+test('admin review uses one application status and omits redundant consent metadata', async () => {
+  const admin = await readFile(new URL('../js/admin.js', import.meta.url), 'utf8');
+  const page = await readFile(new URL('../admin.html', import.meta.url), 'utf8');
+  assert.doesNotMatch(admin, /selectField\(form, '사진 검토'/);
+  assert.doesNotMatch(admin, /reviewing|검토 중/);
+  assert.doesNotMatch(page, /reviewing|검토 중/);
+  assert.doesNotMatch(admin, /'필수 동의'/);
+  assert.doesNotMatch(admin, /'동의 문서 버전'/);
+  assert.doesNotMatch(admin, /'동의 시각'/);
+  assert.doesNotMatch(admin, /photoReview:data\.get/);
+  assert.match(admin, /사진 확인 불가, 연락처 인증 안 됨/);
 });
 test('HTTP serves website, blocks private source and rejects foreign Host', async t => {
   const server=createWebsiteServer(); await new Promise(resolve=>server.listen(0,'127.0.0.1',resolve));

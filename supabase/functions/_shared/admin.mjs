@@ -67,21 +67,21 @@ export function createAdminHandler(env, { backendFactory = createBackend, fetche
         return json({ ok: true }, 200, headers);
       }
       if (body.action === "list") {
-        const statuses = ["submitted", "reviewing", "approved", "rejected"];
+        const statuses = ["submitted", "approved", "rejected"];
         if (body.status && !statuses.includes(body.status)) throw new InputError("조회 조건을 확인해주세요.");
         const offset = Number(body.offset || 0);
         if (!Number.isInteger(offset) || offset < 0 || offset > 1000000) throw new InputError("페이지를 확인해주세요.");
-        const rows = await backend.call(`/rest/v1/daese_applications?select=id,name,birth_year,region_city,status,photo_review,created_at&order=created_at.desc,id.desc&limit=25&offset=${offset}${body.status ? `&status=eq.${body.status}` : ""}`);
+        const rows = await backend.call(`/rest/v1/daese_applications?select=id,name,birth_year,region_city,status,created_at&order=created_at.desc,id.desc&limit=25&offset=${offset}${body.status ? `&status=eq.${body.status}` : ""}`);
         return json({ applications: rows }, 200, headers);
       }
-      if (body.action === "cleanup") return json({ removed: await cleanupPhotos(backend) }, 200, headers);
+      if (body.action === "cleanup") return json(await cleanupPhotos(backend), 200, headers);
       if (!UUID.test(body.id || "")) throw new InputError("신청 번호를 확인해주세요.");
       if (body.action === "detail") {
         const rows = await backend.call(`/rest/v1/daese_applications?id=eq.${body.id}&select=*`);
         if (!rows.length) throw new InputError("신청서를 찾을 수 없습니다.", "", 404);
         const [contact, consent, sensitive, signed] = await Promise.all([
           backend.call(`/rest/v1/daese_contacts?application_id=eq.${body.id}&select=phone,phone_verified`),
-          backend.call(`/rest/v1/daese_consents?application_id=eq.${body.id}&select=*`),
+          backend.call(`/rest/v1/daese_consents?application_id=eq.${body.id}&select=religion_consent`),
           backend.call(`/rest/v1/daese_sensitive_details?application_id=eq.${body.id}&select=religion`),
           backend.call(`/storage/v1/object/sign/application-photos/${rows[0].photo_path}`, { method: "POST", body: { expiresIn: 60 } }).catch(() => null),
         ]);
@@ -92,21 +92,28 @@ export function createAdminHandler(env, { backendFactory = createBackend, fetche
         return json({ application, contact: contact[0], consent: consent[0], sensitive: sensitive[0] || null, photoUrl }, 200, headers);
       }
       if (body.action === "review") {
-        if (!["submitted","reviewing","approved","rejected"].includes(body.status)
-          || !["pending","approved","rejected"].includes(body.photoReview)
+        if (!["submitted","approved","rejected"].includes(body.status)
           || typeof body.note !== "string" || body.note.length > 3000
           || typeof body.updatedAt !== "string" || !Number.isFinite(Date.parse(body.updatedAt))) throw new InputError("검토 내용을 확인해주세요.");
-        if (body.status === "approved" && body.photoReview !== "approved") throw new InputError("정면 얼굴 사진을 먼저 확인하고 승인해주세요.");
+        const photoReview = body.status === "approved" ? "approved" : "pending";
         const updated = await backend.rpc("daese_review_application", { p_id: body.id, p_actor: user.id,
-          p_status: body.status, p_photo_review: body.photoReview, p_note: body.note, p_expected_updated_at: body.updatedAt });
+          p_status: body.status, p_photo_review: photoReview, p_note: body.note, p_expected_updated_at: body.updatedAt });
         if (!updated) throw new InputError("다른 곳에서 수정되었거나 삭제되었습니다. 상세를 다시 열어주세요.", "", 409);
         return json({ ok: true }, 200, headers);
+      }
+      if (body.action === "retention-event") {
+        if (!["result_notified","service_ended","deletion_requested"].includes(body.event)
+          || typeof body.updatedAt !== "string" || !Number.isFinite(Date.parse(body.updatedAt))) throw new InputError("파기 기준을 확인해주세요.");
+        const purgeDueAt = await backend.rpc("daese_mark_retention_event", { p_id: body.id, p_actor: user.id,
+          p_event: body.event, p_expected_updated_at: body.updatedAt });
+        if (!purgeDueAt) throw new InputError("다른 곳에서 수정되었거나 삭제되었습니다. 상세를 다시 열어주세요.", "", 409);
+        return json({ purgeDueAt }, 200, headers);
       }
       if (body.action === "delete") {
         if (body.confirmId !== body.id) throw new InputError("삭제할 신청 번호를 다시 확인해주세요.");
         const removed = await backend.rpc("daese_delete_application", { p_id: body.id, p_actor: user.id });
         let photosPending = false;
-        try { await cleanupPhotos(backend); } catch { photosPending = true; }
+        try { photosPending = (await cleanupPhotos(backend)).failed > 0; } catch { photosPending = true; }
         return json({ removed, photosPending }, 200, headers);
       }
       throw new InputError("지원하지 않는 요청입니다.");

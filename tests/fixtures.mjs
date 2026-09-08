@@ -54,6 +54,9 @@ const signatures = {
   daese_claim_intake: ['p_id','p_fingerprint','p_rate_key'], daese_finish_intake: ['p_id','p_lease_id','p_data'],
   daese_review_application:['p_id','p_actor','p_status','p_photo_review','p_note','p_expected_updated_at'],
   daese_delete_application:['p_id','p_actor'], daese_prepare_cleanup:[],
+  daese_mark_retention_event:['p_id','p_actor','p_event','p_expected_updated_at'],
+  daese_prepare_retention_purge:['p_limit'],
+  daese_record_photo_cleanup_result:['p_photo_path','p_success','p_error'],
 };
 export function sqlBackend(db) {
   return {
