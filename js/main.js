@@ -119,6 +119,21 @@
   form.querySelectorAll("[data-age-select]").forEach((select) => {
     for (let age = 20; age <= 40; age += 1) select.add(new Option(`만 ${age}세`, String(age)));
   });
+  const preferredAgeMin = form.elements.preferred_age_min;
+  const preferredAgeMax = form.elements.preferred_age_max;
+  function updateMaximumAgeOptions() {
+    const previous = preferredAgeMax.value;
+    const minimum = Number(preferredAgeMin.value) || 20;
+    preferredAgeMax.replaceChildren(new Option("선택해주세요", ""));
+    for (let age = minimum; age <= 40; age += 1) {
+      preferredAgeMax.add(new Option(`만 ${age}세`, String(age)));
+    }
+    preferredAgeMax.value = previous && Number(previous) >= minimum ? previous : "";
+    preferredAgeMax.setCustomValidity("");
+  }
+  preferredAgeMin.addEventListener("change", updateMaximumAgeOptions);
+  window.addEventListener("pageshow", updateMaximumAgeOptions);
+  updateMaximumAgeOptions();
 
   const jobCategory = form.elements.job_category;
   const jobOther = form.elements.job_other;
@@ -157,7 +172,7 @@
   const photoMessage = form.querySelector("[data-photo-message]");
   let previewUrl = "";
 
-  const sampleProfile = { isSample: true, name: "김지연", birthYear: "2003", favorites: ["게임", "고양이"], location: "대전", mbti: "INTJ", height: 165, photoUrl: "" };
+  const sampleProfile = { isSample: true, name: "김지연", birthYear: "2003", favorites: ["게임", "고양이"], location: "대전 서구", mbti: "INTJ", height: 165, photoUrl: "" };
   const cardMount = document.querySelector("[data-profile-card-mount]");
   const previewPanel = document.querySelector("[data-profile-panel]");
   const previewDetails = document.querySelector("[data-preview-details]");
@@ -171,7 +186,7 @@
       name: form.elements.name.value.trim(),
       birthYear: form.elements.birth_year.value,
       favorites,
-      location: { daejeon: "대전", sejong: "세종" }[city.value] || "",
+      location: [{ daejeon: "대전", sejong: "세종" }[city.value], detail.value].filter(Boolean).join(" "),
       mbti: form.elements.mbti.value,
       height: form.elements.height.value,
       photoUrl: previewUrl,
@@ -242,9 +257,10 @@
     restoreFileInput();
   }
   function cropGeometry() {
-    const width = cropViewport.clientWidth;
-    const height = cropViewport.clientHeight;
-    const scale = Math.max(width / cropImage.naturalWidth, height / cropImage.naturalHeight) * cropState.zoom;
+    const width = cropViewport.getBoundingClientRect().width;
+    const height = width;
+    // Reserve pan room on both axes even at the default 100% zoom.
+    const scale = Math.max(width / cropImage.naturalWidth, height / cropImage.naturalHeight) * 1.2 * cropState.zoom;
     const imageWidth = cropImage.naturalWidth * scale;
     const imageHeight = cropImage.naturalHeight * scale;
     return { width, height, scale, imageWidth, imageHeight,
@@ -360,8 +376,8 @@
     try {
       const g = cropGeometry();
       const canvas = document.createElement("canvas");
-      canvas.width = 1780;
-      canvas.height = 1090;
+      canvas.width = 1200;
+      canvas.height = 1200;
       const context = canvas.getContext("2d");
       context.fillStyle = "#faf8f2";
       context.fillRect(0, 0, canvas.width, canvas.height);

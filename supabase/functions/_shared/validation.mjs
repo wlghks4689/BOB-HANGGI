@@ -93,7 +93,10 @@ export async function validatePhoto(file) {
       if (length < 8) invalid();
       const height = bytes[position + 3] * 256 + bytes[position + 4];
       const width = bytes[position + 5] * 256 + bytes[position + 6];
-      if (width !== 1780 || height !== 1090) invalid();
+      // Keep in-flight legacy clients compatible while new clients save square photos.
+      const square = width === 1200 && height === 1200;
+      const legacy = width === 1780 && height === 1090;
+      if (!square && !legacy) invalid();
       dimensions = true;
     }
     if (marker === 0xda) { scan = true; break; }

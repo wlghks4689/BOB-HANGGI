@@ -11,7 +11,7 @@ export const env = {
   RATE_LIMIT_SECRET: 'fake-test-value-not-a-production-secret',
 };
 // JPEG marker fixture for envelope validation only; no real person's photograph.
-export const photoBytes = new Uint8Array([255,216,255,192,0,11,8,4,66,6,244,1,1,17,0,255,218,0,8,1,1,0,0,63,0,1,2,3,255,217]);
+export const photoBytes = new Uint8Array([255,216,255,192,0,11,8,4,176,4,176,1,1,17,0,255,218,0,8,1,1,0,0,63,0,1,2,3,255,217]);
 export function validForm(requestId = id) {
   const form = new FormData();
   for (const [key,value] of Object.entries({

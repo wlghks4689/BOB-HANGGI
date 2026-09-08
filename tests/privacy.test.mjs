@@ -39,7 +39,7 @@ test('internal operations document retains removed implementation and release-bl
   assert.match(operations,/승인 회원: 서비스 이용 종료 또는 확인된 삭제 요청 시각부터 48시간/);
 });
 test('landing navigation and application consent keep clear policy links', async () => {
-  const index=await read('index.html');
+  const index=await read('index.html'), landingCss=await read('css/style.css');
   const landingLinks=[...index.matchAll(/<a\b[^>]*href="privacy\.html"[^>]*>/g)];
   assert.equal(landingLinks.length,1);
   assert.ok(!landingLinks[0][0].includes('target='));
@@ -47,9 +47,11 @@ test('landing navigation and application consent keep clear policy links', async
   assert.ok(!index.includes('landing-footer'));
   assert.match(index,/<img src="assets\/landing-original\.png" width="941" height="1672" fetchpriority="high"/);
   assert.match(index,/<a class="poster-apply" href="apply\.html" aria-label="소개 신청하기"><\/a>/);
+  assert.match(landingCss,/\.landing-nav-item \{[\s\S]*?color: #272a21;/);
+  assert.match(landingCss,/border-bottom: 1px solid rgb\(39 42 33 \/ 60%\)/);
 
   const applyHtml=await read('apply.html'), applyLinks=[...applyHtml.matchAll(/<a\b[^>]*href="privacy\.html"[^>]*>/g)];
-  assert.equal(applyLinks.length,2);
+  assert.equal(applyLinks.length,1);
   for (const [link] of applyLinks) { assert.match(link,/target="_blank"/);assert.match(link,/rel="noopener"/); }
   const consentBlock=applyHtml.match(/<fieldset class="form-section" id="privacy">([\s\S]*?)<\/fieldset>/)[1];
   assert.equal([...consentBlock.matchAll(/type="checkbox"/g)].length,2);
@@ -69,6 +71,17 @@ test('profile preview starts folded on desktop and mobile', async () => {
   assert.ok(!html.match(/<details class="profile-preview-details" data-preview-details open/));
   assert.match(script,/previewDetails\.open = false/);
   assert.ok(!script.includes('matchMedia("(min-width: 1024px)")'));
+});
+test('profile card keeps balanced heading and consistent uppercase metadata typography', async () => {
+  const script=await read('js/main.js'), css=await read('css/style.css');
+  for (const label of ['NAME','YEAR OF BIRTH','FAVORITES','LOCATION','MBTI','HEIGHT']) {
+    assert.match(script,new RegExp(`>${label}<`),label);
+  }
+  assert.match(css,/\.card-heading \{[^}]*padding:18px 8px 16px/);
+  assert.match(css,/\.card-title \{[^}]*font-size:calc\(8\.8cqw \+ 4px\)/);
+  assert.match(css,/\.card-brand small,\.card-brand strong \{[^}]*font-size:4\.3cqw/);
+  assert.match(css,/\.card-label \{[\s\S]*?font-family:Arial,Helvetica,sans-serif; font-size:13px;[\s\S]*?text-transform:uppercase;[\s\S]*?\}/);
+  assert.match(css,/\.card-value \{[^}]*font-size:19px/);
 });
 test('browser, notice, server and new SQL consent versions agree without rewriting old history', async () => {
   for (const file of ['privacy.html','js/main.js','.env.example','docs/consent-2026-09-07-v1.md','supabase/migrations/202609070003_privacy_policy_v1.sql']) {

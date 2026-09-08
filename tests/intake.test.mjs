@@ -31,6 +31,14 @@ test('reject reversed age range and enforce current-year boundary', () => {
 });
 test('photo validates size, signature and expected cropped dimensions', async () => {
   await validatePhoto(validForm().get('profile_photo'));
+  for (const [width, height, accepted] of [[1780,1090,true],[1200,1200,true],[1200,1090,false],[1090,1780,false],[2400,2400,false]]) {
+    const bytes = new Uint8Array(await validForm().get('profile_photo').arrayBuffer());
+    bytes[7] = height >> 8; bytes[8] = height & 255;
+    bytes[9] = width >> 8; bytes[10] = width & 255;
+    const file = new File([bytes], 'dimensions.jpg', { type: 'image/jpeg' });
+    if (accepted) await validatePhoto(file);
+    else await assert.rejects(() => validatePhoto(file), /올바른 JPG/);
+  }
   await assert.rejects(() => validatePhoto(new File(['fake'],'x.jpg',{type:'image/jpeg'})));
   await assert.rejects(() => validatePhoto(new File(['fake'],'x.svg',{type:'image/svg+xml'})));
   await assert.rejects(() => validatePhoto({size:6*1024*1024,type:'image/jpeg',arrayBuffer(){throw new Error('must not read');}}));
