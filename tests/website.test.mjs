@@ -7,7 +7,7 @@ import { CONSENT_VERSION } from '../supabase/functions/_shared/validation.mjs';
 
 test('public files allowlist rejects environment, Git, server, SQL, traversal and backup files', () => {
   for (const path of ['/.env.local','/.git/config','/package.json','/scripts/serve-website.mjs','/supabase/migrations/x.sql','/js/../.env','/assets/.secret.js','/js/x.js.map','/js/x.js:secret','/js\\main.js']) assert.equal(isPublicPath(path),false,path);
-  for (const path of ['/index.html','/apply.html','/privacy.html','/css/privacy.css','/admin.html','/js/main.js','/assets/fonts/NanumGothic-Regular.ttf']) assert.equal(isPublicPath(path),true,path);
+  for (const path of ['/index.html','/apply.html','/privacy.html','/css/privacy.css','/admin.html','/pool.html','/js/pool.js','/css/pool.css','/js/main.js','/assets/fonts/NanumGothic-Regular.ttf']) assert.equal(isPublicPath(path),true,path);
 });
 
 test('browser configuration uses local APIs only on localhost', async () => {
@@ -29,6 +29,15 @@ test('admin review uses one application status and omits redundant consent metad
   assert.doesNotMatch(admin, /'동의 시각'/);
   assert.doesNotMatch(admin, /photoReview:data\.get/);
   assert.match(admin, /사진 확인 불가, 연락처 인증 안 됨/);
+});
+test('member pool keeps a balanced gender board and comparison dialog without contact fields', async () => {
+  const [page,script,style]=await Promise.all([
+    readFile(new URL('../pool.html',import.meta.url),'utf8'),readFile(new URL('../js/pool.js',import.meta.url),'utf8'),readFile(new URL('../css/pool.css',import.meta.url),'utf8'),
+  ]);
+  assert.match(page,/data-men/);assert.match(page,/data-women/);assert.match(page,/<dialog[^>]+data-compare/);
+  assert.match(script,/action:'pool-list'/);assert.match(script,/action:'pool-detail'/);assert.match(script,/selected\.male && selected\.female/);
+  assert.doesNotMatch(script,/daese_contacts|phone|admin_note|consent/);
+  assert.match(style,/grid-template-columns:1fr 1fr/);assert.match(style,/@media\(max-width:760px\)/);
 });
 test('HTTP serves website, blocks private source and rejects foreign Host', async t => {
   const server=createWebsiteServer(); await new Promise(resolve=>server.listen(0,'127.0.0.1',resolve));

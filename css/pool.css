@@ -1,0 +1,34 @@
+.admin-header-actions { display:flex; align-items:center; gap:12px; }
+.admin-header-actions a { min-height:44px; display:inline-flex; align-items:center; padding:10px 14px; border:1px solid var(--line); border-radius:8px; color:inherit; text-decoration:none; background:var(--surface); }
+.pool-shell { width:min(1100px,calc(100% - 32px)); }
+.pool-guide { margin:0 0 24px; color:var(--secondary); }
+.pool-board { display:grid; grid-template-columns:1fr 1fr; background:#fbfaf5; border:1px solid var(--line); border-radius:18px; overflow:hidden; }
+.pool-column { min-width:0; padding:26px; }
+.pool-column + .pool-column { border-left:1px solid var(--line); }
+.pool-column-title { display:grid; grid-template-columns:auto 1fr auto; align-items:center; gap:14px; padding-bottom:18px; border-bottom:2px solid var(--olive); }
+.pool-column-title > span { font-family:Georgia,serif; font-size:42px; line-height:1; color:var(--olive); }
+.pool-column-title p { margin:0 0 2px; font-size:11px; letter-spacing:.18em; color:var(--secondary); }
+.pool-column-title h2 { margin:0; font-size:21px; }
+.pool-column-title strong { min-width:32px; height:32px; display:grid; place-items:center; border-radius:50%; background:#ece8d9; }
+.pool-list { display:grid; gap:4px; padding-top:12px; }
+.pool-member { width:100%; display:grid; grid-template-columns:54px minmax(0,1fr); gap:12px; align-items:center; text-align:left; border-color:transparent !important; border-radius:10px !important; background:transparent !important; }
+.pool-member:hover { background:#f0ede2 !important; }
+.pool-member[aria-pressed="true"] { border-color:var(--olive) !important; background:#e9eadb !important; }
+.pool-member-marker { width:48px; height:48px; display:grid; place-items:center; border-radius:8px; background:#ded9c8; color:var(--charcoal); font-family:Georgia,serif; font-size:20px; }
+.pool-member-copy { min-width:0; }
+.pool-member-copy strong,.pool-member-copy small { display:block; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+.pool-member-copy small { color:var(--secondary); font-size:12px; margin-top:3px; }
+.pool-empty { padding:28px 8px; color:var(--secondary); text-align:center; }
+.pool-dialog { width:min(980px,calc(100% - 32px)) !important; max-height:calc(100vh - 32px); overflow:auto; }
+.pool-dialog-header { display:flex; justify-content:space-between; align-items:start; gap:16px; margin-bottom:20px; }
+.pool-dialog-header p { margin:0 0 4px !important; font-size:11px; letter-spacing:.16em; color:var(--secondary); }
+.pool-dialog-header h2 { margin:0; }
+.pool-comparison { display:grid; grid-template-columns:1fr 1fr; gap:20px; }
+.pool-profile { min-width:0; padding:18px; border:1px solid var(--line); border-radius:14px; background:#fbfaf5; }
+.pool-profile img { width:100%; aspect-ratio:1780/1090; object-fit:cover; border-radius:10px; margin-bottom:16px; }
+.pool-profile h3 { font-size:23px; margin-bottom:4px; }
+.pool-profile-lead { color:var(--secondary); }
+.pool-profile dl { display:grid; grid-template-columns:92px minmax(0,1fr); gap:9px; margin-top:18px; }
+.pool-profile dt { color:var(--secondary); }
+.pool-profile dd { margin:0; white-space:pre-wrap; overflow-wrap:anywhere; }
+@media(max-width:760px){.pool-board{grid-template-columns:1fr}.pool-column{padding:18px}.pool-column+.pool-column{border-left:0;border-top:1px solid var(--line)}.pool-comparison{grid-template-columns:1fr}.pool-dialog{margin:auto 8px;width:calc(100% - 16px)!important}.admin-header-actions{width:100%;justify-content:flex-end}}

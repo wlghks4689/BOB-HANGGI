@@ -1,0 +1,36 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="robots" content="noindex,nofollow" />
+  <meta name="referrer" content="no-referrer" />
+  <title>회원 풀 | 대.세.는 소개팅</title>
+  <link rel="stylesheet" href="css/style.css" />
+  <link rel="stylesheet" href="css/admin.css" />
+  <link rel="stylesheet" href="css/pool.css" />
+  <script src="js/backend-config.js" defer></script>
+  <script src="js/pool.js" defer></script>
+</head>
+<body>
+  <main class="admin-shell pool-shell">
+    <header class="admin-header"><div><p>대.세.는 소개팅</p><h1>회원 풀</h1></div><div class="admin-header-actions"><a href="admin.html">신청 관리</a><button type="button" data-logout hidden>로그아웃</button></div></header>
+    <p class="admin-message" data-message role="status" tabindex="-1"></p>
+    <form class="admin-login" data-login method="post" action="/api/admin">
+      <h2>관리자 로그인</h2>
+      <p>승인 회원의 매칭 검토 정보는 등록된 관리자만 확인할 수 있습니다.</p>
+      <label for="pool-email">이메일</label><input id="pool-email" name="email" type="email" autocomplete="username" maxlength="254" required />
+      <label for="pool-password">비밀번호</label><input id="pool-password" name="password" type="password" autocomplete="current-password" maxlength="1024" required />
+      <button type="submit" class="button button-primary">로그인</button>
+    </form>
+    <section data-workspace hidden>
+      <p class="pool-guide">남성 회원과 여성 회원을 각각 한 명씩 선택하면 상세 프로필을 함께 비교할 수 있습니다.</p>
+      <div class="pool-board">
+        <section class="pool-column" aria-labelledby="men-title"><div class="pool-column-title"><span>남</span><div><p>MEN</p><h2 id="men-title">남자 회원</h2></div><strong data-men-count>0</strong></div><div class="pool-list" data-men></div></section>
+        <section class="pool-column" aria-labelledby="women-title"><div class="pool-column-title"><span>여</span><div><p>WOMEN</p><h2 id="women-title">여자 회원</h2></div><strong data-women-count>0</strong></div><div class="pool-list" data-women></div></section>
+      </div>
+    </section>
+    <dialog class="pool-dialog" data-compare><div class="pool-dialog-header"><div><p>PROFILE COMPARISON</p><h2>선택 회원 비교</h2></div><button type="button" aria-label="비교 창 닫기" data-close>닫기</button></div><div class="pool-comparison" data-comparison></div></dialog>
+  </main>
+</body>
+</html>
